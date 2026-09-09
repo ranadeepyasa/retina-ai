@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: retina_ai_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-retina_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-retina_secure_password_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-retina_ai_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retina_user -d retina_ai_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: retina_ai_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://retina_user:retina_secure_password_2026@postgres:5432/retina_ai_db
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-retina-ai-sih-dev-secret-key-change-in-production-2026}
+      - DEMO_MODE=${DEMO_MODE:-true}
+      - UPLOAD_DIR=/app/uploads
+      - MODELS_DIR=/app/models
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:80
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_models:/app/models
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: retina_ai_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:
+  backend_uploads:
+  backend_models:

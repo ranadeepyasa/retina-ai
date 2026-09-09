@@ -1,0 +1,95 @@
+# ====================================================================
+# RetinaAI - Root Git Ignore
+# ====================================================================
+
+# Environment Variables & Secrets (CRITICAL: Never commit secrets)
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+*.env.local
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+backend/test_uploads/
+test_uploads/
+
+# Node / Frontend Build
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel/
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+backend/retina_ai.db
+retina_ai.db
+
+# Runtime Uploads and Generated Screenings
+backend/uploads/scr_*
+backend/uploads/screening_*
+backend/uploads/temp/
+# Preserve sample images for quick evaluation
+!backend/uploads/samples/
+!backend/uploads/samples/*.jpg
+
+# Large Deep Learning Checkpoints (>50MB)
+*.pth
+*.pt
+*.onnx
+*.h5
+*.ckpt
+backend/models/*.pth
+
+# Logs & OS artifacts
+*.log
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE & Editor configurations
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
