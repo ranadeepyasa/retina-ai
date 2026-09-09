@@ -4,7 +4,7 @@ from typing import Optional, Any
 from jose import jwt, JWTError
 import bcrypt
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "retina-ai-sih-dev-secret-key-change-in-production-2026")
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY") or os.getenv("JWT_SECRET", "retina-ai-sih-dev-secret-key-change-in-production-2026")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 

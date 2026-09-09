@@ -15,6 +15,8 @@
 
 > [!IMPORTANT]
 > **MANDATORY CLINICAL SAFETY NOTICE & MEDICAL DISCLAIMER**
+> **RetinaAI is an AI-assisted screening prototype and does not replace professional medical diagnosis.**
+>
 > RetinaAI is designed strictly as an **AI-assisted screening and referral decision support system** for triage in primary care settings. It is **NOT** an autonomous diagnostic device and does **NOT** substitute for a comprehensive clinical evaluation by an ophthalmologist or optometrist. All algorithmic outputs, severity stages, and Grad-CAM saliency overlays are preliminary recommendations that require expert clinical verification before initiating medical, laser, or surgical interventions.
 
 ---
@@ -71,12 +73,12 @@ RetinaAI directly addresses each failure mode through an end-to-end Explainable 
 
 ```
 +----------------------------------------+     +----------------------------------------+
-¦         Urban Tertiary Centers         ¦     ¦         Rural Primary Care (PHCs)      ¦
-+----------------------------------------¦     +----------------------------------------¦
-¦ • 80%+ of Ophthalmologists             ¦ vs. ¦ • 70%+ of Diabetic Population          ¦
-¦ • Optical Coherence Tomography (OCT)   ¦     ¦ • ASHA Workers / Community Health Off. ¦
-¦ • High-end Topcon/Zeiss Tabletop Units ¦     ¦ • Low-cost portable fundus adapters    ¦
-¦ • Regular annual dilated examinations  ¦     ¦ • Significant travel barrier (50-200km)¦
+|         Urban Tertiary Centers         |     |         Rural Primary Care (PHCs)      |
++----------------------------------------|     +----------------------------------------|
+| â€¢ 80%+ of Ophthalmologists             | vs. | â€¢ 70%+ of Diabetic Population          |
+| â€¢ Optical Coherence Tomography (OCT)   |     | â€¢ ASHA Workers / Community Health Off. |
+| â€¢ High-end Topcon/Zeiss Tabletop Units |     | â€¢ Low-cost portable fundus adapters    |
+| â€¢ Regular annual dilated examinations  |     | â€¢ Significant travel barrier (50-200km)|
 +----------------------------------------+     +----------------------------------------+
 ```
 
@@ -110,7 +112,7 @@ RetinaAI directly addresses each failure mode through an end-to-end Explainable 
 5. **District Administrative & Governance Hub:**
    - Real-time monitoring of screening volume, epidemiological stage breakdown, image quality pass-rates, and transparent model accuracy telemetry.
 
-6. **Fully Responsive Clinical UI (320px–1440px):**
+6. **Fully Responsive Clinical UI (320pxâ€“1440px):**
    - Optimized for desktop diagnostic monitors, tablets, and low-cost Android smartphones utilized by frontline health workers in rural field camps.
 
 ---
@@ -144,19 +146,19 @@ The resulting 2D activation map is bilinearly upsampled to $224 \times 224$, col
 ```
 Frontend (React 19 SPA)           Backend API (FastAPI)              Machine Learning & XAI
 +-------------------------+       +-------------------------+       +-------------------------+
-¦ • Vite 8 + React 19     ¦ ---?  ¦ • Python 3.11+          ¦ ---?  ¦ • PyTorch 2.x (CPU/CUDA)¦
-¦ • Tailwind CSS          ¦       ¦ • FastAPI REST Engine   ¦       ¦ • Torchvision           ¦
-¦ • Recharts + Lucide     ¦       ¦ • SQLAlchemy 2.0 ORM    ¦       ¦ • EfficientNet-B0       ¦
-¦ • Axios + JWT Intercept ¦       ¦ • Pydantic v2 Schemas   ¦       ¦ • Native Grad-CAM Hooks ¦
-¦ • Vercel Ready SPA      ¦       ¦ • ReportLab PDF Engine  ¦       ¦ • PIL + OpenCV Variance ¦
+| â€¢ Vite 8 + React 19     | ---?  | â€¢ Python 3.11+          | ---?  | â€¢ PyTorch 2.x (CPU/CUDA)|
+| â€¢ Tailwind CSS          |       | â€¢ FastAPI REST Engine   |       | â€¢ Torchvision           |
+| â€¢ Recharts + Lucide     |       | â€¢ SQLAlchemy 2.0 ORM    |       | â€¢ EfficientNet-B0       |
+| â€¢ Axios + JWT Intercept |       | â€¢ Pydantic v2 Schemas   |       | â€¢ Native Grad-CAM Hooks |
+| â€¢ Vercel Ready SPA      |       | â€¢ ReportLab PDF Engine  |       | â€¢ PIL + OpenCV Variance |
 +-------------------------+       +-------------------------+       +-------------------------+
-             ¦                                 ¦                                 ¦
+             |                                 |                                 |
              +-------------------------------------------------------------------+
-                                               ¦
+                                               |
                                        Database Options
                                   +-------------------------+
-                                  ¦ • SQLite (Dev/Demo)     ¦
-                                  ¦ • PostgreSQL (Prod)     ¦
+                                  | â€¢ SQLite (Dev/Demo)     |
+                                  | â€¢ PostgreSQL (Prod)     |
                                   +-------------------------+
 ```
 
@@ -236,44 +238,44 @@ Evaluation metrics (Accuracy, Sensitivity, Specificity, Precision, F1-Score, Con
 ```
 retina-ai/
 +-- .github/
-¦   +-- workflows/
-¦       +-- ci.yml                 # Automated CI test suite (Pytest + Vite Build)
+|   +-- workflows/
+|       +-- ci.yml                 # Automated CI test suite (Pytest + Vite Build)
 +-- backend/
-¦   +-- app/
-¦   ¦   +-- api/                   # REST API routes (auth, patients, screenings, etc.)
-¦   ¦   +-- auth/                  # JWT generation, token verification, password hashing
-¦   ¦   +-- database/              # SQLAlchemy engine, sessions, Base metadata
-¦   ¦   +-- ml/                    # Inference wrapper, Grad-CAM hooks, image quality check
-¦   ¦   +-- models/                # Database entities (User, Patient, Screening, etc.)
-¦   ¦   +-- schemas/               # Pydantic request & response validation schemas
-¦   ¦   +-- services/              # PDF report generator, rate limiter, demo seeder
-¦   +-- models/                    # Trained model checkpoints (*.pth) & metrics.json
-¦   +-- tests/
-¦   ¦   +-- test_api.py            # Comprehensive Pytest API & inference suite
-¦   +-- uploads/                   # Runtime screening assets (samples/ preserved)
-¦   +-- .env.example               # Backend configuration template (Zero secrets)
-¦   +-- Dockerfile                 # Containerization specification for backend
-¦   +-- requirements.txt           # Production Python dependencies
+|   +-- app/
+|   |   +-- api/                   # REST API routes (auth, patients, screenings, etc.)
+|   |   +-- auth/                  # JWT generation, token verification, password hashing
+|   |   +-- database/              # SQLAlchemy engine, sessions, Base metadata
+|   |   +-- ml/                    # Inference wrapper, Grad-CAM hooks, image quality check
+|   |   +-- models/                # Database entities (User, Patient, Screening, etc.)
+|   |   +-- schemas/               # Pydantic request & response validation schemas
+|   |   +-- services/              # PDF report generator, rate limiter, demo seeder
+|   +-- models/                    # Trained model checkpoints (*.pth) & metrics.json
+|   +-- tests/
+|   |   +-- test_api.py            # Comprehensive Pytest API & inference suite
+|   +-- uploads/                   # Runtime screening assets (samples/ preserved)
+|   +-- .env.example               # Backend configuration template (Zero secrets)
+|   +-- Dockerfile                 # Containerization specification for backend
+|   +-- requirements.txt           # Production Python dependencies
 +-- frontend/
-¦   +-- public/                    # Static SVG icons and favicon assets
-¦   +-- src/
-¦   ¦   +-- components/            # UI components (Button, Card, Badges, Modals)
-¦   ¦   +-- context/               # React AuthContext & session state
-¦   ¦   +-- layouts/               # Responsive AppLayout (Drawer) & PublicLayout
-¦   ¦   +-- pages/                 # Route pages (Clinical Workstation, Admin, Public)
-¦   ¦   +-- services/              # Axios client with dynamic API resolution
-¦   ¦   +-- types/                 # TypeScript interfaces and response types
-¦   +-- .env.example               # Frontend environment template
-¦   +-- vercel.json                # Vercel SPA routing rewrites & security headers
-¦   +-- package.json               # Node dependencies & build scripts
-¦   +-- vite.config.ts             # Vite build & local dev proxy configuration
+|   +-- public/                    # Static SVG icons and favicon assets
+|   +-- src/
+|   |   +-- components/            # UI components (Button, Card, Badges, Modals)
+|   |   +-- context/               # React AuthContext & session state
+|   |   +-- layouts/               # Responsive AppLayout (Drawer) & PublicLayout
+|   |   +-- pages/                 # Route pages (Clinical Workstation, Admin, Public)
+|   |   +-- services/              # Axios client with dynamic API resolution
+|   |   +-- types/                 # TypeScript interfaces and response types
+|   +-- .env.example               # Frontend environment template
+|   +-- vercel.json                # Vercel SPA routing rewrites & security headers
+|   +-- package.json               # Node dependencies & build scripts
+|   +-- vite.config.ts             # Vite build & local dev proxy configuration
 +-- ml/                            # Standalone PyTorch training and evaluation scripts
-¦   +-- config.py                  # ML hyperparameters & dataset paths
-¦   +-- dataset.py                 # Dataset loader with clinical augmentations
-¦   +-- evaluate.py                # Metric calculator (Sensitivity, Specificity, F1)
-¦   +-- gradcam.py                 # Standalone Grad-CAM utility
-¦   +-- model.py                   # Model factory (EfficientNet-B0)
-¦   +-- train.py                   # Training loop with validation checkpoints
+|   +-- config.py                  # ML hyperparameters & dataset paths
+|   +-- dataset.py                 # Dataset loader with clinical augmentations
+|   +-- evaluate.py                # Metric calculator (Sensitivity, Specificity, F1)
+|   +-- gradcam.py                 # Standalone Grad-CAM utility
+|   +-- model.py                   # Model factory (EfficientNet-B0)
+|   +-- train.py                   # Training loop with validation checkpoints
 +-- docker-compose.yml             # Full-stack multi-container deployment
 +-- .gitignore                     # Root gitignore excluding secrets, cache, and DBs
 +-- README.md                      # Comprehensive project documentation
@@ -284,14 +286,14 @@ retina-ai/
 ## 10. Quick Start / Local Installation
 
 ### Prerequisites
-* **Python:** 3.11 or newer (tested on Python 3.11 – 3.14)
+* **Python:** 3.11 or newer (tested on Python 3.11 â€“ 3.14)
 * **Node.js:** 18 or newer (tested on Node 20 / 22 / 24)
 * **Git:** Installed and configured
 
 ### Step 1: Clone Repository
 ```bash
-git clone https://github.com/your-org/retina-ai-dr-screening.git
-cd retina-ai-dr-screening
+git clone https://github.com/ranadeepyasa/retina-ai.git
+cd retina-ai
 ```
 
 ### Step 2: Backend Setup
@@ -473,6 +475,6 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 
 ## 20. Team Credits & Acknowledgments
 
-* **Smart India Hackathon (SIH)** — For fostering technological innovation to solve real-world national challenges.
-* **Ministry of Health & Family Welfare (MoHFW)** — For public health screening guidelines on Diabetic Retinopathy.
-* **Open Source Medical Imaging Community** — APTOS, EyePACS, and Messidor consortiums for making de-identified diabetic retinopathy benchmarks accessible for research.
+* **Smart India Hackathon (SIH)** â€” For fostering technological innovation to solve real-world national challenges.
+* **Ministry of Health & Family Welfare (MoHFW)** â€” For public health screening guidelines on Diabetic Retinopathy.
+* **Open Source Medical Imaging Community** â€” APTOS, EyePACS, and Messidor consortiums for making de-identified diabetic retinopathy benchmarks accessible for research.
