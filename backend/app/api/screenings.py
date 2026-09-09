@@ -49,14 +49,24 @@ def verify_pil_image(file_path: str):
             detail="Corrupted or invalid image file. Please upload a valid retinal fundus photograph."
         )
 
-def build_image_url(relative_path: str) -> str:
-    """Converts a local path in uploads into an accessible API URL"""
-    if not relative_path:
+def build_image_url(file_path: str) -> str:
+    """Converts a local file path inside UPLOAD_DIR into an accessible API URL"""
+    if not file_path:
         return ""
-    norm = relative_path.replace("\\", "/")
-    parts = norm.split("uploads/")
-    sub_path = parts[-1] if len(parts) > 1 else norm
-    return f"/api/images/{sub_path}"
+    try:
+        abs_upload = os.path.abspath(UPLOAD_DIR)
+        abs_file = os.path.abspath(file_path)
+        if abs_file.startswith(abs_upload):
+            rel = os.path.relpath(abs_file, abs_upload)
+        else:
+            norm = file_path.replace("\\", "/")
+            parts = norm.split("uploads/")
+            rel = parts[-1] if len(parts) > 1 else norm
+        clean_rel = rel.replace("\\", "/").lstrip("/")
+        return f"/api/images/{clean_rel}"
+    except Exception:
+        clean = file_path.replace("\\", "/").split("uploads/")[-1].lstrip("/")
+        return f"/api/images/{clean}"
 
 @router.post("/quality-check", response_model=QualityCheckResponse)
 async def check_quality(

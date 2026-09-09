@@ -51,14 +51,23 @@ cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://local
 origins = [o.strip() for o in cors_origins_str.split(",") if o.strip()]
 origin_regex = os.getenv("CORS_ORIGIN_REGEX", r"https://.*\.vercel\.app")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins if origins else ["*"],
-    allow_origin_regex=origin_regex if origin_regex else None,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+if "*" in origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+else:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins if origins else ["*"],
+        allow_origin_regex=origin_regex if origin_regex else None,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 # Include Routers under /api
 app.include_router(auth.router, prefix="/api")
@@ -79,6 +88,7 @@ def root():
         "safety_disclaimer": "AI results are preliminary screening outputs and do not replace professional examination by an ophthalmologist."
     }
 
+@app.get("/health")
 @app.get("/api/health")
 def health():
     return {"status": "healthy", "service": "RetinaAI Clinical Backend"}

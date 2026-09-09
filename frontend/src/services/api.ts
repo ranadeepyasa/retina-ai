@@ -4,18 +4,22 @@ import {
   DashboardStats, AdminAnalytics, ModelPerformanceMetrics
 } from '../types';
 
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').trim().replace(/\/+$/, '');
+export const API_BASE_URL = rawBaseUrl.endsWith('/api') ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 export const resolveImageUrl = (path?: string | null): string => {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('blob:') || path.startsWith('data:')) {
     return path;
   }
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const normalizedPath = cleanPath.startsWith('/api') ? cleanPath : `/api${cleanPath}`;
+
   if (API_BASE_URL.startsWith('http')) {
     const origin = API_BASE_URL.replace(/\/api$/, '');
-    return `${origin}${path.startsWith('/') ? '' : '/'}${path}`;
+    return `${origin}${normalizedPath}`;
   }
-  return path;
+  return normalizedPath;
 };
 
 const api = axios.create({
@@ -106,7 +110,21 @@ export const screeningService = {
     return res.data;
   },
   getReportUrl(id: number): string {
-    return `${API_BASE_URL}/screenings/${id}/report`;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('retina_token') : null;
+    const tokenParam = token ? `?token=${encodeURIComponent(token)}` : '';
+    return `${API_BASE_URL}/screenings/${id}/report${tokenParam}`;
+  },
+  async downloadReport(id: number, patientCode: string = 'Report') {
+    const res = await api.get(`/screenings/${id}/report`, { responseType: 'blob' });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `RetinaAI_Report_SCR${id}_${patientCode}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
   }
 };
 
