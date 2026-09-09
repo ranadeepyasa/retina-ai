@@ -4,6 +4,7 @@ import {
   Download, ArrowLeft, Eye, ShieldCheck, AlertCircle,
   FileCheck, Clock, CheckCircle2, User, RefreshCw, Layers
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
@@ -18,6 +19,7 @@ import { ConfidenceBar } from '../../components/ui/ConfidenceBar';
 import { Alert } from '../../components/ui/Alert';
 
 export const ResultPage: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -127,7 +129,7 @@ export const ResultPage: React.FC = () => {
               size="md"
               icon={<Download className="w-4 h-4" />}
             >
-              Download PDF Report
+              {t('results.downloadReport', 'Download PDF Report')}
             </Button>
           </a>
         </div>
@@ -136,26 +138,26 @@ export const ResultPage: React.FC = () => {
       {/* Patient & Screening Demographics Bar */}
       <div className="bg-white p-4 rounded-xl border border-[#DCE3E3] shadow-xs grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
         <div>
-          <span className="text-[#667477] block text-[11px]">Patient Demographics</span>
+          <span className="text-[#667477] block text-[11px]">{t('screening.patientInfo', 'Patient Demographics')}</span>
           <span className="font-semibold text-[#173B3F]">
             {screening.patient?.age || '--'} yrs • {screening.patient?.sex || 'Unknown'}
           </span>
         </div>
         <div>
-          <span className="text-[#667477] block text-[11px]">Diabetes Duration</span>
+          <span className="text-[#667477] block text-[11px]">{t('screening.diabetesDuration', 'Diabetes Duration')}</span>
           <span className="font-semibold text-[#173B3F]">
             {screening.patient?.diabetes_duration || 'Not recorded'}
           </span>
         </div>
         <div>
-          <span className="text-[#667477] block text-[11px]">Screening Timestamp</span>
+          <span className="text-[#667477] block text-[11px]">{t('common.date', 'Screening Timestamp')}</span>
           <span className="font-semibold text-[#173B3F]">{dateFormatted}</span>
         </div>
         <div>
-          <span className="text-[#667477] block text-[11px]">Image Quality Pre-Check</span>
+          <span className="text-[#667477] block text-[11px]">{t('screening.qualityCheckTitle', 'Image Quality Pre-Check')}</span>
           <span className="font-semibold">
             <Badge variant={screening.image_quality === 'GOOD_QUALITY' ? 'success' : 'warning'} size="sm">
-              {screening.image_quality === 'GOOD_QUALITY' ? 'Good Quality' : 'Poor Quality'}
+              {screening.image_quality === 'GOOD_QUALITY' ? t('screening.qualityPass', 'Good Quality') : t('screening.qualityWarning', 'Poor Quality')}
             </Badge>
           </span>
         </div>
@@ -165,11 +167,11 @@ export const ResultPage: React.FC = () => {
       <div className="bg-white p-6 rounded-2xl border border-[#DCE3E3] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-[#667477]">
-            AI-Assisted Severity Classification
+            {t('results.severityTitle', 'AI-Assisted Severity Classification')}
           </span>
           <div className="flex items-center gap-3">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#173B3F] tracking-tight">
-              {pred ? pred.predicted_label.toUpperCase() : 'CLASSIFICATION PENDING'}
+              {pred ? (t(`severity.${pred.predicted_class}`, pred.predicted_label).toUpperCase()) : 'CLASSIFICATION PENDING'}
             </h2>
           </div>
           {pred && (
@@ -179,7 +181,7 @@ export const ResultPage: React.FC = () => {
 
         <div className="md:w-64 bg-[#F7F8F6] p-4 rounded-xl border border-[#DCE3E3] space-y-2 shrink-0">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[#667477] font-medium">Model Confidence</span>
+            <span className="text-[#667477] font-medium">{t('results.confidenceTitle', 'Model Confidence')}</span>
             <span className="text-base font-bold text-[#173B3F]">
               {pred ? `${Math.round(pred.confidence * 100)}%` : '--'}
             </span>
@@ -197,10 +199,10 @@ export const ResultPage: React.FC = () => {
           <div>
             <h3 className="text-base font-bold text-[#173B3F] flex items-center gap-2">
               <Eye className="w-4 h-4 text-[#2E6F73]" />
-              Visual Evidence & Grad-CAM Explanation
+              {t('results.gradcamTitle', 'Visual Evidence & Grad-CAM Explanation')}
             </h3>
             <p className="text-xs text-[#667477] mt-0.5">
-              Gradient-weighted feature attribution localized to retinal vascular anatomy
+              {t('results.gradcamSubtitle', 'Gradient-weighted feature attribution localized to retinal vascular anatomy')}
             </p>
           </div>
 
@@ -328,7 +330,7 @@ export const ResultPage: React.FC = () => {
         {/* Horizontal Probability Distribution Chart */}
         <div className="lg:col-span-6 bg-white p-6 rounded-2xl border border-[#DCE3E3] shadow-xs space-y-4">
           <div className="border-b border-[#DCE3E3] pb-3">
-            <h3 className="text-sm font-bold text-[#173B3F]">Class Probability Distribution</h3>
+            <h3 className="text-sm font-bold text-[#173B3F]">{t('results.probabilityDistribution', 'Class Probability Distribution')}</h3>
             <p className="text-[11px] text-[#667477]">Model softmax outputs across all 5 clinical stages</p>
           </div>
 
@@ -358,27 +360,29 @@ export const ResultPage: React.FC = () => {
           </div>
 
           <div className="pt-2 text-[11px] text-[#667477] flex items-center justify-between border-t border-[#DCE3E3]">
-            <span>Primary Predicted: <strong>{pred?.predicted_label}</strong></span>
+            <span>Primary Predicted: <strong>{pred ? t(`severity.${pred.predicted_class}`, pred.predicted_label) : '--'}</strong></span>
             <span>Architecture: {pred?.model_version || 'EfficientNet-B0'}</span>
           </div>
         </div>
 
         {/* Clinical Interpretation & Referral Action */}
         <div className="lg:col-span-6 space-y-6">
-          <Card title="Screening Interpretation" subtitle="Key microvascular pattern observations">
+          <Card title={t('results.ophthalmologistReview', 'Screening Interpretation')} subtitle="Key microvascular pattern observations">
             <p className="text-xs text-[#172326] leading-relaxed">
               {pred?.interpretation || 'Awaiting detailed clinical interpretation notes.'}
             </p>
           </Card>
 
-          <Card title="Suggested Next Step" subtitle="Decision support for referral planning">
+          <Card title={t('results.recommendedAction', 'Suggested Next Step')} subtitle="Decision support for referral planning">
             <div className="space-y-3">
               <div className="p-3.5 rounded-xl bg-[#DCEDEC]/50 border border-[#2E6F73]/30 text-xs font-medium text-[#173B3F]">
                 {pred?.suggested_action || 'Consider referral for professional ophthalmological evaluation.'}
               </div>
               <div className="flex items-center justify-between text-xs text-[#667477] pt-1">
-                <span>Referral Urgency Category:</span>
-                <span className="font-bold text-[#173B3F]">{screening.referral_urgency}</span>
+                <span>{t('results.urgencyLevel', 'Referral Urgency Category')}:</span>
+                <span className="font-bold text-[#173B3F]">
+                  {t(`urgency.${screening.referral_urgency}`, screening.referral_urgency)}
+                </span>
               </div>
             </div>
           </Card>
@@ -387,9 +391,7 @@ export const ResultPage: React.FC = () => {
 
       {/* MANDATORY CLINICAL SAFETY DISCLAIMER */}
       <Alert variant="warning" title="Clinical Safety & Governance Notice">
-        RetinaAI is an AI-assisted screening decision support system. The severity grading and Grad-CAM saliency overlays 
-        represent algorithmic assistance and do not constitute an autonomous medical diagnosis. Clinical confirmation by 
-        a qualified ophthalmologist or licensed eye-care professional is mandatory before initiating medical or surgical interventions.
+        {t('app.disclaimer', 'RetinaAI is an AI-assisted screening decision support system. The algorithmic findings and Grad-CAM saliency heatmaps are intended to assist preliminary triage and referral planning. They do NOT constitute an independent clinical diagnosis and must be confirmed by a licensed ophthalmologist or eye-care professional.')}
       </Alert>
     </div>
   );

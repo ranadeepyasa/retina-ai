@@ -4,28 +4,31 @@ import {
   Eye, LayoutDashboard, PlusCircle, History, Users, FileText,
   ShieldAlert, Settings, LogOut, Menu, X, BarChart3, Cpu, UserCheck, AlertTriangle
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import { LanguageSelector } from '../components/ui/LanguageSelector';
 
 export const AppLayout: React.FC = () => {
+  const { t } = useTranslation();
   const { user, logout, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const workerNav = [
-    { name: 'Dashboard', path: '/app', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { name: 'New Screening', path: '/app/new-screening', icon: <PlusCircle className="w-4 h-4" /> },
-    { name: 'Screening History', path: '/app/history', icon: <History className="w-4 h-4" /> },
-    { name: 'Patients', path: '/app/patients', icon: <Users className="w-4 h-4" /> },
-    { name: 'Reports', path: '/app/reports', icon: <FileText className="w-4 h-4" /> },
+    { name: t('nav.dashboard', 'Dashboard'), path: '/app', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { name: t('nav.newScreening', 'New Screening'), path: '/app/new-screening', icon: <PlusCircle className="w-4 h-4" /> },
+    { name: t('nav.history', 'Screening History'), path: '/app/history', icon: <History className="w-4 h-4" /> },
+    { name: t('nav.patients', 'Patients'), path: '/app/patients', icon: <Users className="w-4 h-4" /> },
+    { name: t('nav.reports', 'Reports'), path: '/app/reports', icon: <FileText className="w-4 h-4" /> },
   ];
 
   const adminNav = [
-    { name: 'Admin Overview', path: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { name: t('nav.admin', 'Admin Overview'), path: '/admin', icon: <LayoutDashboard className="w-4 h-4" /> },
     { name: 'Users & Roles', path: '/admin/users', icon: <UserCheck className="w-4 h-4" /> },
-    { name: 'Screening Analytics', path: '/admin/analytics', icon: <BarChart3 className="w-4 h-4" /> },
-    { name: 'Model Performance', path: '/admin/model-performance', icon: <Cpu className="w-4 h-4" /> },
-    { name: 'System Settings', path: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
+    { name: t('nav.analytics', 'Screening Analytics'), path: '/admin/analytics', icon: <BarChart3 className="w-4 h-4" /> },
+    { name: t('nav.modelPerformance', 'Model Performance'), path: '/admin/model-performance', icon: <Cpu className="w-4 h-4" /> },
+    { name: t('nav.settings', 'System Settings'), path: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
   const currentNav = location.pathname.startsWith('/admin') ? adminNav : workerNav;
@@ -122,10 +125,12 @@ export const AppLayout: React.FC = () => {
           </nav>
         </div>
 
-        {/* User Profile & Logout Bottom Bar */}
-        <div className="p-4 border-t border-[#DCE3E3]">
-          <div className="flex items-center gap-3 mb-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-[#DCEDEC] text-[#173B3F] flex items-center justify-center font-bold text-xs">
+        {/* User Profile, Language Selector & Logout Bottom Bar */}
+        <div className="p-4 border-t border-[#DCE3E3] space-y-3">
+          <LanguageSelector variant="drawer" />
+
+          <div className="flex items-center gap-3 px-1">
+            <div className="w-8 h-8 rounded-full bg-[#DCEDEC] text-[#173B3F] flex items-center justify-center font-bold text-xs shrink-0">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>
             <div className="overflow-hidden">
@@ -138,7 +143,7 @@ export const AppLayout: React.FC = () => {
             className="w-full flex items-center justify-center gap-2 px-3 py-1.5 text-xs text-[#B94A48] hover:bg-[#B94A48]/10 rounded-xl transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
+            <span>{t('nav.logout', 'Sign Out')}</span>
           </button>
         </div>
       </aside>
@@ -159,11 +164,14 @@ export const AppLayout: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSelector />
+
             {/* Demo Mode Notice Badge */}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#C98A3D]/10 text-[#C98A3D] text-[11px] font-semibold border border-[#C98A3D]/30">
-              <AlertTriangle className="w-3 h-3" />
-              <span>DEMO MODE (SIH Prototype)</span>
+              <AlertTriangle className="w-3 h-3 shrink-0" />
+              <span className="hidden xs:inline">DEMO MODE (SIH Prototype)</span>
+              <span className="xs:hidden">SIH DEMO</span>
             </div>
           </div>
         </header>
@@ -171,10 +179,12 @@ export const AppLayout: React.FC = () => {
         {/* Global Demo Mode Warning Banner */}
         <div className="bg-[#DCEDEC]/40 border-b border-[#2E6F73]/20 px-4 sm:px-6 py-2 text-[11px] text-[#173B3F] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-semibold px-1.5 py-0.5 bg-[#2E6F73] text-white rounded text-[10px]">NOTICE</span>
-            <span>All AI severity predictions are preliminary screening recommendations and require clinical confirmation by an ophthalmologist.</span>
+            <span className="font-semibold px-1.5 py-0.5 bg-[#2E6F73] text-white rounded text-[10px] shrink-0">NOTICE</span>
+            <span className="truncate sm:whitespace-normal">
+              {t('app.disclaimer', 'All AI severity predictions are preliminary screening recommendations and require clinical confirmation by an ophthalmologist.')}
+            </span>
           </div>
-          <Link to="/safety" className="underline text-[#2E6F73] hover:text-[#173B3F] hidden md:inline">
+          <Link to="/safety" className="underline text-[#2E6F73] hover:text-[#173B3F] hidden md:inline shrink-0">
             Read Safety Guidelines
           </Link>
         </div>

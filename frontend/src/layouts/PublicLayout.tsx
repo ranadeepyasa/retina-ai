@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Eye, ArrowRight, ShieldCheck, Activity, Menu, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Button';
+import { LanguageSelector } from '../components/ui/LanguageSelector';
 
 export const PublicLayout: React.FC = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,13 +24,13 @@ export const PublicLayout: React.FC = () => {
             <div>
               <span className="text-lg font-bold text-[#173B3F] tracking-tight">RetinaAI</span>
               <span className="block text-[10px] text-[#667477] font-medium leading-none -mt-0.5">
-                Explainable Retinal Screening
+                {t('app.tag', 'Explainable Retinal Screening')}
               </span>
             </div>
           </Link>
 
           <nav className="hidden md:flex items-center gap-7 text-xs font-medium text-[#667477]">
-            <Link to="/" className="hover:text-[#173B3F] transition-colors">Home</Link>
+            <Link to="/" className="hover:text-[#173B3F] transition-colors">{t('nav.home', 'Home')}</Link>
             <Link to="/how-it-works" className="hover:text-[#173B3F] transition-colors">How It Works</Link>
             <Link to="/technology" className="hover:text-[#173B3F] transition-colors">Technology</Link>
             <Link to="/safety" className="hover:text-[#173B3F] transition-colors">Safety & Ethics</Link>
@@ -35,6 +38,8 @@ export const PublicLayout: React.FC = () => {
           </nav>
 
           <div className="flex items-center gap-2">
+            <LanguageSelector />
+
             {isAuthenticated ? (
               <Button
                 size="sm"
@@ -42,7 +47,7 @@ export const PublicLayout: React.FC = () => {
                 onClick={() => navigate(user?.role === 'ADMINISTRATOR' ? '/admin' : '/app')}
                 icon={<Activity className="w-3.5 h-3.5" />}
               >
-                <span className="hidden sm:inline">Go to </span>Portal
+                <span className="hidden sm:inline">Go to </span>{t('nav.dashboard', 'Portal')}
               </Button>
             ) : (
               <Button
@@ -51,7 +56,7 @@ export const PublicLayout: React.FC = () => {
                 onClick={() => navigate('/login')}
                 icon={<ArrowRight className="w-3.5 h-3.5" />}
               >
-                <span className="hidden sm:inline">Healthcare </span>Portal
+                <span className="hidden sm:inline">Healthcare </span>{t('nav.login', 'Portal')}
               </Button>
             )}
 
@@ -104,6 +109,9 @@ export const PublicLayout: React.FC = () => {
             >
               Demo & Info
             </Link>
+            <div className="pt-2 border-t border-[#DCE3E3]">
+              <LanguageSelector variant="drawer" />
+            </div>
           </div>
         )}
       </header>

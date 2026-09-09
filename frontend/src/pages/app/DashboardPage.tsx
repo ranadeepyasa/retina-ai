@@ -4,6 +4,7 @@ import {
   PlusCircle, Activity, Clock, AlertTriangle, CheckCircle2,
   FileText, ArrowRight, Eye, RefreshCw
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { dashboardService, screeningService } from '../../services/api';
 import { DashboardStats, Screening } from '../../types';
@@ -14,6 +15,7 @@ import { Badge } from '../../components/ui/Badge';
 import { EmptyState } from '../../components/ui/EmptyState';
 
 export const DashboardPage: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -54,10 +56,10 @@ export const DashboardPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-[#173B3F]">
-            {getGreeting()}, {user?.name || 'Healthcare Officer'}
+            {t('dashboard.welcome', 'Clinical Screening Dashboard')}
           </h1>
           <p className="text-xs text-[#667477] mt-0.5">
-            Retinal Screening Overview • {user?.facility || 'Primary Health Centre'}
+            {t('dashboard.subtitle', 'Overview of community retinal screenings and pending referrals')} • {user?.facility || 'Primary Health Centre'}
           </p>
         </div>
 
@@ -68,7 +70,7 @@ export const DashboardPage: React.FC = () => {
             onClick={loadData}
             icon={<RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />}
           >
-            Refresh
+            {t('common.retry', 'Refresh')}
           </Button>
           <Button
             variant="primary"
@@ -76,7 +78,7 @@ export const DashboardPage: React.FC = () => {
             onClick={() => navigate('/app/new-screening')}
             icon={<PlusCircle className="w-4 h-4" />}
           >
-            + New Screening
+            {t('dashboard.startNewScreening', '+ New Screening')}
           </Button>
         </div>
       </div>
@@ -84,25 +86,25 @@ export const DashboardPage: React.FC = () => {
       {/* Top 4 Statistics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="Today's Screenings"
+          label={t('dashboard.totalScreenings', "Total Screenings")}
           value={stats?.todays_screenings ?? '--'}
           subtext="Screened at this facility"
           icon={<Activity className="w-5 h-5" />}
         />
         <StatCard
-          label="Pending Review"
+          label={t('dashboard.pendingReviews', "Pending Review")}
           value={stats?.pending_review ?? '--'}
           subtext="Awaiting clinician triage"
           icon={<Clock className="w-5 h-5 text-[#C98A3D]" />}
         />
         <StatCard
-          label="Referrals Suggested"
+          label={t('dashboard.urgentReferrals', "Referrals Suggested")}
           value={stats?.referrals_suggested ?? '--'}
           subtext="Stage 1 to 4 flagged"
           icon={<AlertTriangle className="w-5 h-5 text-[#B94A48]" />}
         />
         <StatCard
-          label="Total Screenings"
+          label={t('dashboard.totalScreenings', "Total Screenings")}
           value={stats?.total_screenings ?? '--'}
           subtext={`Avg Conf: ${stats ? Math.round(stats.avg_confidence * 100) : 88}%`}
           icon={<FileText className="w-5 h-5" />}
@@ -113,7 +115,7 @@ export const DashboardPage: React.FC = () => {
       <div className="bg-white rounded-2xl border border-[#DCE3E3] shadow-xs overflow-hidden">
         <div className="px-6 py-4 border-b border-[#DCE3E3] flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-[#173B3F]">Recent Retinal Screenings</h2>
+            <h2 className="text-base font-bold text-[#173B3F]">{t('dashboard.recentScreenings', 'Recent Retinal Screenings')}</h2>
             <p className="text-xs text-[#667477]">Latest patient scans processed by the AI screening pipeline</p>
           </div>
           <Button
@@ -122,7 +124,7 @@ export const DashboardPage: React.FC = () => {
             onClick={() => navigate('/app/history')}
             icon={<ArrowRight className="w-3.5 h-3.5" />}
           >
-            View All History
+            {t('dashboard.viewAll', 'View All History')}
           </Button>
         </div>
 
@@ -139,7 +141,7 @@ export const DashboardPage: React.FC = () => {
                   onClick={() => navigate('/app/new-screening')}
                   icon={<PlusCircle className="w-3.5 h-3.5" />}
                 >
-                  Start First Screening
+                  {t('dashboard.startNewScreening', 'Start First Screening')}
                 </Button>
               }
             />
@@ -149,13 +151,13 @@ export const DashboardPage: React.FC = () => {
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F7F8F6] text-[#667477] border-b border-[#DCE3E3] uppercase tracking-wider font-semibold">
                 <tr>
-                  <th className="px-6 py-3">Patient ID</th>
-                  <th className="px-6 py-3">Date</th>
-                  <th className="px-6 py-3">Image Quality</th>
-                  <th className="px-6 py-3">AI Result</th>
-                  <th className="px-6 py-3">Confidence</th>
-                  <th className="px-6 py-3">Review Status</th>
-                  <th className="px-6 py-3 text-right">Action</th>
+                  <th className="px-6 py-3">{t('screening.patientId', 'Patient ID')}</th>
+                  <th className="px-6 py-3">{t('common.date', 'Date')}</th>
+                  <th className="px-6 py-3">{t('screening.qualityCheckTitle', 'Image Quality')}</th>
+                  <th className="px-6 py-3">{t('results.title', 'AI Result')}</th>
+                  <th className="px-6 py-3">{t('results.confidenceTitle', 'Confidence')}</th>
+                  <th className="px-6 py-3">{t('common.status', 'Review Status')}</th>
+                  <th className="px-6 py-3 text-right">{t('common.actions', 'Action')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DCE3E3] text-[#172326]">

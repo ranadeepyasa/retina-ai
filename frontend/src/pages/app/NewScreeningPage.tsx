@@ -4,6 +4,7 @@ import {
   UploadCloud, FileImage, CheckCircle2, AlertTriangle, ArrowRight,
   User, Sparkles, RefreshCw, X, ShieldAlert, AlertCircle, Eye
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { screeningService, patientService, resolveImageUrl } from '../../services/api';
 import { Patient, QualityCheckResponse } from '../../types';
 import { Card } from '../../components/ui/Card';
@@ -12,6 +13,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Alert } from '../../components/ui/Alert';
 
 export const NewScreeningPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,10 +35,10 @@ export const NewScreeningPage: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStage, setAnalysisStage] = useState(0); // 0 to 4
   const stages = [
-    'Preparing retinal image & normalization...',
-    'Evaluating microvascular patterns & lesions...',
-    'Generating Grad-CAM feature attribution heatmaps...',
-    'Compiling clinical referral decision support report...',
+    t('screening.analyzingStep1', 'Verifying image quality & illumination balance...'),
+    t('screening.analyzingStep2', 'Extracting retinal vascular features & lesion cues...'),
+    t('screening.analyzingStep3', 'Computing Grad-CAM saliency heatmaps & referral triage...'),
+    t('results.subtitle', 'Compiling clinical referral decision support report...'),
   ];
 
   // Quick Preset Samples for Hackathon Judges
@@ -140,9 +142,9 @@ export const NewScreeningPage: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
       <div>
-        <h1 className="text-2xl font-bold text-[#173B3F]">New Retinal Screening</h1>
+        <h1 className="text-2xl font-bold text-[#173B3F]">{t('screening.title', 'New Retinal Screening')}</h1>
         <p className="text-xs text-[#667477] mt-0.5">
-          Step-by-step patient registration, quality pre-check, and explainable AI analysis
+          {t('screening.subtitle', 'Step-by-step patient registration, quality pre-check, and explainable AI analysis')}
         </p>
       </div>
 
@@ -173,11 +175,11 @@ export const NewScreeningPage: React.FC = () => {
       </div>
 
       {/* STEP 1: Patient Information */}
-      <Card title="Step 1: Patient Information" subtitle="Demographics essential for retinal screening risk profiling">
+      <Card title={`Step 1: ${t('screening.patientInfo', 'Patient Information')}`} subtitle="Demographics essential for retinal screening risk profiling">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-[#173B3F] mb-1">
-              Patient ID / Code <span className="text-[#B94A48]">*</span>
+              {t('screening.patientId', 'Patient ID / ABHA ID')} <span className="text-[#B94A48]">*</span>
             </label>
             <input
               type="text"
@@ -190,7 +192,7 @@ export const NewScreeningPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#173B3F] mb-1">Patient Age</label>
+            <label className="block text-xs font-semibold text-[#173B3F] mb-1">{t('screening.age', 'Patient Age')}</label>
             <input
               type="number"
               value={age}
@@ -201,20 +203,20 @@ export const NewScreeningPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#173B3F] mb-1">Sex</label>
+            <label className="block text-xs font-semibold text-[#173B3F] mb-1">{t('screening.gender', 'Gender')}</label>
             <select
               value={sex}
               onChange={(e) => setSex(e.target.value)}
               className="w-full px-3.5 py-2 text-sm rounded-xl border border-[#DCE3E3] focus:outline-none focus:ring-2 focus:ring-[#2E6F73] bg-[#F7F8F6]/40 text-[#172326]"
             >
-              <option value="Female">Female</option>
-              <option value="Male">Male</option>
-              <option value="Other">Other</option>
+              <option value="Female">{t('screening.female', 'Female')}</option>
+              <option value="Male">{t('screening.male', 'Male')}</option>
+              <option value="Other">{t('screening.other', 'Other')}</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[#173B3F] mb-1">Diabetes Duration</label>
+            <label className="block text-xs font-semibold text-[#173B3F] mb-1">{t('screening.diabetesDuration', 'Diabetes Duration')}</label>
             <input
               type="text"
               value={diabetesDuration}
@@ -225,7 +227,7 @@ export const NewScreeningPage: React.FC = () => {
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-[#173B3F] mb-1">Clinical Notes (Optional)</label>
+            <label className="block text-xs font-semibold text-[#173B3F] mb-1">{t('common.notes', 'Clinical Notes')} (Optional)</label>
             <textarea
               rows={2}
               value={notes}
@@ -238,7 +240,7 @@ export const NewScreeningPage: React.FC = () => {
       </Card>
 
       {/* STEP 2: Fundus Image Upload & Quality Check */}
-      <Card title="Step 2: Retinal Fundus Image" subtitle="Compatible with standard tabletop and handheld fundus cameras">
+      <Card title={`Step 2: ${t('screening.uploadSection', 'Fundus Image Acquisition')}`} subtitle="Compatible with standard tabletop and handheld fundus cameras">
         <div className="space-y-4">
           <div
             onDragOver={(e) => e.preventDefault()}
@@ -256,9 +258,9 @@ export const NewScreeningPage: React.FC = () => {
             <div className="w-12 h-12 rounded-2xl bg-[#DCEDEC] text-[#173B3F] flex items-center justify-center mx-auto mb-3">
               <UploadCloud className="w-6 h-6 text-[#2E6F73]" />
             </div>
-            <p className="text-sm font-semibold text-[#173B3F]">Upload Retinal Fundus Image</p>
+            <p className="text-sm font-semibold text-[#173B3F]">{t('screening.dropzoneTitle', 'Drop retinal fundus image here or click to browse')}</p>
             <p className="text-xs text-[#667477] mt-1">
-              Drag and drop your fundus photograph here, or click to browse
+              {t('screening.dropzoneSubtitle', 'Supports JPG, PNG format up to 20MB. Clear macular and optic disc view recommended.')}
             </p>
             <p className="text-[11px] text-[#667477]/80 mt-1">Supports PNG, JPG, JPEG (RGB)</p>
           </div>
@@ -311,7 +313,7 @@ export const NewScreeningPage: React.FC = () => {
                         variant={qcResult.is_acceptable ? 'success' : 'danger'}
                         size="md"
                       >
-                        {qcResult.image_quality === 'GOOD_QUALITY' ? 'GOOD QUALITY' : 'POOR QUALITY'}
+                        {qcResult.image_quality === 'GOOD_QUALITY' ? t('screening.qualityPass', 'GOOD QUALITY') : t('screening.qualityWarning', 'POOR QUALITY')}
                       </Badge>
                       <span className="text-xs font-medium text-[#173B3F]">
                         Score: {Math.round(qcResult.quality_score * 100)}%
@@ -352,7 +354,7 @@ export const NewScreeningPage: React.FC = () => {
               onClick={handleStartAnalysis}
               icon={<Eye className="w-4 h-4" />}
             >
-              Analyze Retinal Image
+              {t('screening.analyzeButton', 'Run AI Retinopathy Analysis')}
             </Button>
           </div>
         </div>
@@ -366,7 +368,7 @@ export const NewScreeningPage: React.FC = () => {
               <div className="w-12 h-12 rounded-2xl bg-[#DCEDEC] text-[#173B3F] flex items-center justify-center mx-auto">
                 <RefreshCw className="w-6 h-6 text-[#2E6F73] animate-spin" />
               </div>
-              <h3 className="text-base font-bold text-[#173B3F]">Analyzing Retinal Image...</h3>
+              <h3 className="text-base font-bold text-[#173B3F]">{t('screening.analyzing', 'Analyzing Retinal Image...')}</h3>
               <p className="text-xs text-[#667477]">
                 Processing patient {patientCode} through the explainable AI pipeline
               </p>

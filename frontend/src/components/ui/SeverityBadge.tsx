@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, AlertCircle, AlertTriangle, ShieldAlert } from 'lucide-react';
 
 interface SeverityBadgeProps {
@@ -14,6 +15,7 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
   size = 'md',
   className = '',
 }) => {
+  const { t } = useTranslation();
   const configs = [
     {
       label: 'No Diabetic Retinopathy',
@@ -47,7 +49,9 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
     },
   ];
 
-  const cfg = configs[Math.min(Math.max(severity, 0), 4)];
+  const validSeverity = Math.min(Math.max(severity, 0), 4);
+  const cfg = configs[validSeverity];
+  const translatedLabel = t(`severity.${validSeverity}`, cfg.label);
 
   const sizeStyles = {
     sm: 'text-xs px-2 py-0.5 rounded-md gap-1',
@@ -58,11 +62,11 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
   return (
     <span
       className={`inline-flex items-center border ${cfg.bg} ${sizeStyles[size]} ${className}`}
-      title={cfg.label}
+      title={translatedLabel}
     >
       {cfg.icon}
       {showStage && <span className="opacity-75">{cfg.stage}:</span>}
-      <span>{cfg.label}</span>
+      <span>{translatedLabel}</span>
     </span>
   );
 };

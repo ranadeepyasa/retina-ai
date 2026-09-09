@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, ArrowRight, Stethoscope, ShieldCheck, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
+import { LanguageSelector } from '../../components/ui/LanguageSelector';
 
 export const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -59,7 +62,11 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F8F6] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F7F8F6] flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative">
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+        <LanguageSelector />
+      </div>
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <Link to="/" className="inline-flex items-center gap-2.5 mb-3">
           <div className="w-10 h-10 rounded-xl bg-[#173B3F] text-white flex items-center justify-center shadow-xs">
@@ -67,9 +74,9 @@ export const LoginPage: React.FC = () => {
           </div>
           <span className="text-2xl font-bold text-[#173B3F] tracking-tight">RetinaAI</span>
         </Link>
-        <h2 className="text-xl font-bold text-[#173B3F]">Clinical Portal Sign In</h2>
+        <h2 className="text-xl font-bold text-[#173B3F]">{t('auth.signInTitle', 'Clinical Portal Sign In')}</h2>
         <p className="text-xs text-[#667477] mt-1">
-          Access the AI-assisted diabetic retinopathy screening workstation
+          {t('auth.signInSubtitle', 'Access the AI-assisted diabetic retinopathy screening workstation')}
         </p>
       </div>
 
@@ -108,7 +115,7 @@ export const LoginPage: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Role selector tabs */}
             <div>
-              <label className="block text-xs font-semibold text-[#173B3F] mb-1.5">Intended Role</label>
+              <label className="block text-xs font-semibold text-[#173B3F] mb-1.5">{t('auth.roleLabel', 'Intended Role')}</label>
               <div className="grid grid-cols-2 gap-2 p-1 bg-[#F7F8F6] rounded-xl border border-[#DCE3E3]">
                 <button
                   type="button"
@@ -120,7 +127,7 @@ export const LoginPage: React.FC = () => {
                   }`}
                 >
                   <Stethoscope className="w-3.5 h-3.5" />
-                  <span>Healthcare Worker</span>
+                  <span>{t('auth.roleHealthWorker', 'Healthcare Worker')}</span>
                 </button>
                 <button
                   type="button"
@@ -132,13 +139,13 @@ export const LoginPage: React.FC = () => {
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />
-                  <span>Administrator</span>
+                  <span>{t('auth.roleAdmin', 'Administrator')}</span>
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-[#173B3F] mb-1">Email Address</label>
+              <label className="block text-xs font-semibold text-[#173B3F] mb-1">{t('auth.emailLabel', 'Email Address')}</label>
               <input
                 type="email"
                 required
@@ -151,7 +158,7 @@ export const LoginPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-[#173B3F]">Password</label>
+                <label className="block text-xs font-semibold text-[#173B3F]">{t('auth.passwordLabel', 'Password')}</label>
                 <Link to="/forgot-password" className="text-xs text-[#2E6F73] hover:underline">
                   Forgot password?
                 </Link>
@@ -175,22 +182,22 @@ export const LoginPage: React.FC = () => {
                 isLoading={loading}
                 icon={<ArrowRight className="w-4 h-4" />}
               >
-                Sign In to Platform
+                {t('auth.signInButton', 'Sign In to Platform')}
               </Button>
             </div>
           </form>
 
           <div className="mt-6 pt-6 border-t border-[#DCE3E3] text-center text-xs text-[#667477]">
-            <span>Don't have an account? </span>
+            <span>{t('auth.noAccount', "Don't have an account?")} </span>
             <Link to="/register" className="font-semibold text-[#2E6F73] hover:underline">
-              Create account
+              {t('auth.createAccount', 'Create account')}
             </Link>
           </div>
         </div>
 
         <div className="text-center mt-6">
           <Link to="/" className="text-xs text-[#667477] hover:text-[#173B3F]">
-            ← Return to public website
+            ← {t('common.back', 'Return to public website')}
           </Link>
         </div>
       </div>

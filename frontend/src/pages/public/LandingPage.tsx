@@ -4,10 +4,12 @@ import {
   Eye, CheckCircle2, ArrowRight, ShieldCheck, Microscope,
   Sparkles, Layers, FileCheck, Stethoscope, ChevronRight, Activity, Info
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 
 export const LandingPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showGradcamPreview, setShowGradcamPreview] = useState(true);
 
@@ -19,15 +21,15 @@ export const LandingPage: React.FC = () => {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DCEDEC] text-[#173B3F] text-xs font-semibold tracking-wide">
               <Sparkles className="w-3.5 h-3.5 text-[#2E6F73]" />
-              <span>AI-ASSISTED DIABETIC RETINOPATHY SCREENING</span>
+              <span>{t('landing.heroBadge', 'AI-ASSISTED DIABETIC RETINOPATHY SCREENING')}</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#173B3F] tracking-tight leading-tight">
-              Bringing Earlier Retinal Screening Closer to Every Community.
+              {t('landing.heroTitle', 'Bringing Earlier Retinal Screening Closer to Every Community.')}
             </h1>
 
             <p className="text-base text-[#667477] leading-relaxed max-w-xl">
-              RetinaAI analyzes retinal fundus images to identify patterns associated with diabetic retinopathy severity and provides a visual explanation of the model's prediction.
+              {t('landing.heroSubtitle', 'Empowering frontline health workers and primary health centres with explainable deep learning to detect diabetic retinopathy before irreversible vision loss.')}
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -37,14 +39,14 @@ export const LandingPage: React.FC = () => {
                 onClick={() => navigate('/login')}
                 icon={<ArrowRight className="w-4 h-4" />}
               >
-                Start a Screening
+                {t('landing.startScreening', 'Start a Screening')}
               </Button>
               <Button
                 size="lg"
                 variant="outline"
                 onClick={() => navigate('/how-it-works')}
               >
-                Explore How It Works
+                {t('landing.learnMore', 'Explore How It Works')}
               </Button>
             </div>
 
