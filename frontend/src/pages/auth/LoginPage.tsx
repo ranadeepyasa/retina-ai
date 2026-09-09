@@ -23,7 +23,7 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(email.trim(), password);
+      await login(email.trim().toLowerCase(), password.trim());
       // Navigate based on role
       const userStr = localStorage.getItem('retina_user');
       const parsed = userStr ? JSON.parse(userStr) : null;
@@ -33,7 +33,13 @@ export const LoginPage: React.FC = () => {
         navigate('/app');
       }
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Invalid email or password. Please verify your credentials.');
+      if (!err.response) {
+        setError('Cannot connect to backend server. Make sure FastAPI is running (http://127.0.0.1:8000) or check your Vercel VITE_API_BASE_URL setting.');
+      } else if (err.response.status === 401) {
+        setError('Incorrect email or password. For demo, click the "Healthcare Worker" or "Administrator" button below.');
+      } else {
+        setError(err.response?.data?.detail || 'Authentication failed. Please verify credentials.');
+      }
     } finally {
       setLoading(false);
     }
