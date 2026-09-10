@@ -290,6 +290,10 @@ retina-ai/
 * **Node.js:** 18 or newer (tested on Node 20 / 22 / 24)
 * **Git:** Installed and configured
 
+> [!TIP]
+> **Windows 1-Click Startup:**
+> On Windows, simply double-click **`run.bat`** in the project root (or run `.\run.bat` in VS Code). It will automatically validate dependencies, launch the FastAPI backend and Vite frontend in separate terminal windows, and display the service URLs.
+
 ### Step 1: Clone Repository
 ```bash
 git clone https://github.com/ranadeepyasa/retina-ai.git
