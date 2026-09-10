@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UploadCloud, FileImage, CheckCircle2, AlertTriangle, ArrowRight,
-  User, Sparkles, RefreshCw, X, ShieldAlert, AlertCircle, Eye
+  User, RefreshCw, X, ShieldAlert, AlertCircle, Eye
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { screeningService, patientService, resolveImageUrl } from '../../services/api';
@@ -151,8 +151,7 @@ export const NewScreeningPage: React.FC = () => {
       {/* Quick Fast-Select for Evaluators */}
       <div className="bg-white p-4 rounded-xl border border-[#DCE3E3] shadow-xs">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-semibold text-[#173B3F] flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#2E6F73]" />
+          <span className="text-xs font-semibold text-[#173B3F] flex items-center">
             Fast Evaluation Presets (Click to autofill patient & fundus image)
           </span>
           <span className="text-[10px] text-[#667477]">Smart India Hackathon</span>

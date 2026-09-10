@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Eye, CheckCircle2, ArrowRight, ShieldCheck, Microscope,
-  Sparkles, Layers, FileCheck, Stethoscope, ChevronRight, Activity, Info
+  Layers, FileCheck, Stethoscope, ChevronRight, Activity, Info
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
@@ -19,8 +19,7 @@ export const LandingPage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#DCEDEC] text-[#173B3F] text-xs font-semibold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5 text-[#2E6F73]" />
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#DCEDEC] text-[#173B3F] text-xs font-semibold tracking-wide">
               <span>{t('landing.heroBadge', 'AI-ASSISTED DIABETIC RETINOPATHY SCREENING')}</span>
             </div>
 
