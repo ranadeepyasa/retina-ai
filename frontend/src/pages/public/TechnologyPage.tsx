@@ -92,15 +92,18 @@ export const TechnologyPage: React.FC = () => {
       {/* Edge & Offline Readiness */}
       <div className="bg-[#173B3F] text-white p-8 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2">
-          <span className="text-[11px] font-semibold text-[#DCEDEC] uppercase tracking-wider">Infrastructure Feasibility</span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold text-[#DCEDEC] uppercase tracking-wider">Infrastructure Feasibility</span>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-white/20 text-white font-semibold">Future Deployment Capability</span>
+          </div>
           <h3 className="text-lg font-bold">Engineered for Low-Bandwidth Rural Settings</h3>
           <p className="text-xs text-gray-300 max-w-2xl leading-relaxed">
-            Many Primary Health Centres experience intermittent cellular connectivity. The modular PyTorch pipeline can run locally on edge hardware (such as Intel Core i3 laptops or mini PCs) without mandatory cloud inference.
+            Many Primary Health Centres experience intermittent cellular connectivity. The modular PyTorch architecture is designed for future edge deployment using ONNX Runtime, TensorFlow Lite, and 8-bit post-training quantization, enabling fully localized inference on rural clinic laptops or edge devices without continuous internet dependency.
           </p>
         </div>
         <div className="shrink-0 px-4 py-3 bg-white/10 rounded-xl border border-white/20 text-center">
           <span className="text-xl font-bold text-white block">~1.2s</span>
-          <span className="text-[10px] text-[#DCEDEC]">CPU Inference & Grad-CAM</span>
+          <span className="text-[10px] text-[#DCEDEC]">Local CPU / Edge Inference</span>
         </div>
       </div>
     </div>

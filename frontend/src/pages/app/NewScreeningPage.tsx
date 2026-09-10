@@ -27,6 +27,8 @@ export const NewScreeningPage: React.FC = () => {
   // Image & QC State
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
+  const [overrideQc, setOverrideQc] = useState(false);
   const [isCheckingQuality, setIsCheckingQuality] = useState(false);
   const [qcResult, setQcResult] = useState<QualityCheckResponse | null>(null);
   const [qcError, setQcError] = useState<string | null>(null);
@@ -75,10 +77,32 @@ export const NewScreeningPage: React.FC = () => {
   };
 
   const handleFileSelection = async (file: File) => {
+    // 1. File size check (20MB)
+    if (file.size > 20 * 1024 * 1024) {
+      alert('File size exceeds the 20 MB limit. Please select a compressed retinal image.');
+      return;
+    }
+    // 2. Format validation
+    const validExts = ['.jpg', '.jpeg', '.png'];
+    const hasValidExt = validExts.some(ext => file.name.toLowerCase().endsWith(ext));
+    if (!hasValidExt && !file.type.startsWith('image/')) {
+      alert('Unsupported file type. Please upload a standard retinal fundus photograph (JPG, JPEG, or PNG).');
+      return;
+    }
+
     setSelectedFile(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    const objUrl = URL.createObjectURL(file);
+    setPreviewUrl(objUrl);
     setQcResult(null);
     setQcError(null);
+    setOverrideQc(false);
+
+    // Read natural image dimensions
+    const img = new Image();
+    img.onload = () => {
+      setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = objUrl;
 
     // Run Automated Image Quality Check
     setIsCheckingQuality(true);
@@ -289,12 +313,13 @@ export const NewScreeningPage: React.FC = () => {
 
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-[#173B3F]">
+                  <span className="text-xs font-semibold text-[#173B3F] truncate max-w-[200px] sm:max-w-xs">
                     {selectedFile?.name}
                   </span>
                   {selectedFile && (
-                    <span className="text-[10px] text-[#667477]">
-                      {Math.round(selectedFile.size / 1024)} KB
+                    <span className="text-[11px] text-[#667477]">
+                      {imageDimensions ? `${imageDimensions.width} × ${imageDimensions.height} px • ` : ''}
+                      {(selectedFile.size / 1024).toFixed(0)} KB
                     </span>
                   )}
                 </div>
@@ -303,7 +328,7 @@ export const NewScreeningPage: React.FC = () => {
                 {isCheckingQuality ? (
                   <div className="flex items-center gap-2 text-xs text-[#667477] py-2">
                     <RefreshCw className="w-4 h-4 animate-spin text-[#2E6F73]" />
-                    <span>Evaluating image quality heuristics...</span>
+                    <span>Evaluating image quality heuristics (resolution, illumination, focus)...</span>
                   </div>
                 ) : qcResult ? (
                   <div className="space-y-2 pt-1">
@@ -317,11 +342,41 @@ export const NewScreeningPage: React.FC = () => {
                       <span className="text-xs font-medium text-[#173B3F]">
                         Score: {Math.round(qcResult.quality_score * 100)}%
                       </span>
+                      <span className="text-[10px] text-[#667477] italic">
+                        (Prototype Heuristic Pre-Check)
+                      </span>
                     </div>
 
-                    <p className={`text-xs ${qcResult.is_acceptable ? 'text-[#4D8061]' : 'text-[#B94A48]'} font-medium`}>
+                    <p className={`text-xs ${qcResult.is_acceptable ? 'text-[#4D8061]' : 'text-[#B94A48]'} font-semibold leading-relaxed`}>
                       {qcResult.message}
                     </p>
+
+                    {!qcResult.is_acceptable && (
+                      <div className="p-3 bg-[#B94A48]/10 border border-[#B94A48]/20 rounded-xl space-y-2">
+                        <div className="text-xs text-[#B94A48] font-medium flex items-center gap-2">
+                          <AlertTriangle className="w-4 h-4 shrink-0" />
+                          <span>Image quality may affect screening reliability. Please capture another retinal image.</span>
+                        </div>
+                        <div className="flex items-center gap-3 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-xs px-3 py-1.5 bg-[#173B3F] text-white rounded-lg hover:bg-[#2E6F73] transition-colors cursor-pointer font-medium"
+                          >
+                            Capture Another Retinal Image
+                          </button>
+                          <label className="flex items-center gap-1.5 text-[11px] text-[#667477] cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={overrideQc}
+                              onChange={(e) => setOverrideQc(e.target.checked)}
+                              className="rounded border-[#DCE3E3] text-[#2E6F73]"
+                            />
+                            <span>Override check (Evaluation/Testing only)</span>
+                          </label>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px] text-[#667477]">
                       <div className="bg-white p-1.5 rounded border border-[#DCE3E3]">
@@ -345,11 +400,14 @@ export const NewScreeningPage: React.FC = () => {
             </div>
           )}
 
-          <div className="pt-4 flex justify-end">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-[11px] text-[#667477] italic">
+              * The quality check is an automated heuristic filter designed to prevent uninterpretable scans from entering the deep learning model.
+            </p>
             <Button
               size="lg"
               variant="primary"
-              disabled={!selectedFile || isCheckingQuality || isAnalyzing}
+              disabled={!selectedFile || isCheckingQuality || isAnalyzing || (qcResult !== null && !qcResult.is_acceptable && !overrideQc)}
               onClick={handleStartAnalysis}
               icon={<Eye className="w-4 h-4" />}
             >

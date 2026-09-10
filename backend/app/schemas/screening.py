@@ -7,6 +7,7 @@ class QualityCheckResponse(BaseModel):
     quality_score: float
     is_acceptable: bool
     message: str
+    is_prototype_heuristic: Optional[bool] = True
     metrics: Dict[str, float]
 
 class PredictionOut(BaseModel):

@@ -35,7 +35,7 @@ export interface Prediction {
   created_at?: string;
 }
 
-export type ScreeningStatus = 'ANALYZED' | 'PENDING_REVIEW' | 'REVIEWED' | 'REFERRED';
+export type ScreeningStatus = 'ANALYZED' | 'PENDING_REVIEW' | 'REVIEWED' | 'REFERRED' | 'CONFIRMED' | 'UNABLE_TO_DETERMINE';
 export type ReferralUrgency = 'NONE' | 'ROUTINE' | 'SEMI_URGENT' | 'URGENT';
 
 export interface Screening {
@@ -55,7 +55,7 @@ export interface Screening {
   quality_notes?: string;
   status: ScreeningStatus;
   referral_urgency: ReferralUrgency;
-  reviewer_notes?: string;
+  reviewer_notes?: string | null;
   created_by: number;
   created_by_name?: string;
   created_at: string;

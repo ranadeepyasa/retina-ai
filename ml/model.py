@@ -5,6 +5,7 @@ from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 def get_dr_model(num_classes: int = 5, pretrained: bool = True):
     """
     Constructs an EfficientNet-B0 backbone with customized classification head.
+    Maintains exact torchvision classifier key structure (classifier[1] = nn.Linear).
     """
     if pretrained:
         try:
@@ -16,9 +17,7 @@ def get_dr_model(num_classes: int = 5, pretrained: bool = True):
         model = efficientnet_b0(weights=None)
         
     in_features = model.classifier[1].in_features
-    # Replace classifier with Dropout + Linear for 5 classes
-    model.classifier = nn.Sequential(
-        nn.Dropout(p=0.3, inplace=True),
-        nn.Linear(in_features, num_classes)
-    )
+    # Replace dropout with p=0.3 and linear with 5 classes
+    model.classifier[0] = nn.Dropout(p=0.3, inplace=True)
+    model.classifier[1] = nn.Linear(in_features, num_classes)
     return model

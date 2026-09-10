@@ -9,7 +9,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
 
-import { screeningService, resolveImageUrl } from '../../services/api';
+import { screeningService, patientService, resolveImageUrl } from '../../services/api';
 import { Screening } from '../../types';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -24,10 +24,17 @@ export const ResultPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [screening, setScreening] = useState<Screening | null>(null);
+  const [patientTimeline, setPatientTimeline] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'sideBySide' | 'toggle'>('sideBySide');
   const [activeToggleView, setActiveToggleView] = useState<'original' | 'gradcam'>('gradcam');
+
+  // Human-in-the-loop review state
+  const [reviewStatus, setReviewStatus] = useState<string>('PENDING_REVIEW');
+  const [reviewNotes, setReviewNotes] = useState<string>('');
+  const [isSavingReview, setIsSavingReview] = useState(false);
+  const [reviewSavedSuccess, setReviewSavedSuccess] = useState(false);
 
   useEffect(() => {
     const fetchScreening = async () => {
@@ -36,6 +43,24 @@ export const ResultPage: React.FC = () => {
         setLoading(true);
         const data = await screeningService.get(parseInt(id));
         setScreening(data);
+        if (data.status && data.status !== 'ANALYZED') {
+          setReviewStatus(data.status);
+        }
+        if (data.reviewer_notes) {
+          setReviewNotes(data.reviewer_notes);
+        }
+
+        // Fetch patient timeline
+        if (data.patient_id) {
+          try {
+            const pData = await patientService.get(data.patient_id);
+            if (pData && pData.timeline) {
+              setPatientTimeline(pData.timeline);
+            }
+          } catch (pe) {
+            console.warn('Could not load patient timeline', pe);
+          }
+        }
       } catch (err: any) {
         setError(err.response?.data?.detail || 'Unable to load screening record.');
       } finally {
@@ -44,6 +69,30 @@ export const ResultPage: React.FC = () => {
     };
     fetchScreening();
   }, [id]);
+
+  const handleSaveReview = async (decision: 'CONFIRMED' | 'REFERRED' | 'UNABLE_TO_DETERMINE') => {
+    if (!screening) return;
+    setIsSavingReview(true);
+    setReviewSavedSuccess(false);
+    try {
+      await screeningService.update(screening.id, {
+        status: decision,
+        reviewer_notes: reviewNotes.trim() || undefined,
+      });
+      setReviewStatus(decision);
+      setScreening({
+        ...screening,
+        status: decision,
+        reviewer_notes: reviewNotes.trim() || null
+      });
+      setReviewSavedSuccess(true);
+      setTimeout(() => setReviewSavedSuccess(false), 4000);
+    } catch (err: any) {
+      alert(err.response?.data?.detail || 'Failed to update review status.');
+    } finally {
+      setIsSavingReview(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -387,6 +436,188 @@ export const ResultPage: React.FC = () => {
             </div>
           </Card>
         </div>
+      </div>
+
+      {/* HUMAN-IN-THE-LOOP HEALTHCARE WORKER REVIEW */}
+      <div className="bg-white p-6 rounded-2xl border border-[#DCE3E3] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#DCE3E3] pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-[#173B3F] flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#2E6F73]" />
+              Healthcare Worker Screening Review (Human-in-the-Loop)
+            </h3>
+            <p className="text-[11px] text-[#667477]">
+              AI assists screening; qualified healthcare workers validate decisions and initiate referrals.
+            </p>
+          </div>
+          {reviewStatus !== 'PENDING_REVIEW' && reviewStatus !== 'ANALYZED' && (
+            <Badge
+              variant={
+                reviewStatus === 'CONFIRMED'
+                  ? 'success'
+                  : reviewStatus === 'REFERRED'
+                  ? 'danger'
+                  : 'warning'
+              }
+              size="md"
+            >
+              Status: {reviewStatus.replace('_', ' ')}
+            </Badge>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => handleSaveReview('CONFIRMED')}
+            disabled={isSavingReview}
+            className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+              reviewStatus === 'CONFIRMED'
+                ? 'bg-[#DCEDEC] border-[#2E6F73] text-[#173B3F] font-bold shadow-xs'
+                : 'bg-[#F7F8F6] border-[#DCE3E3] hover:bg-[#DCEDEC]/50 text-[#173B3F]'
+            }`}
+          >
+            <CheckCircle2 className="w-5 h-5 mx-auto mb-1 text-[#4D8061]" />
+            <span className="text-xs block font-semibold">Confirm Screening</span>
+            <span className="text-[10px] text-[#667477] block">Agree with AI screening result</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSaveReview('REFERRED')}
+            disabled={isSavingReview}
+            className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+              reviewStatus === 'REFERRED'
+                ? 'bg-[#B94A48]/15 border-[#B94A48] text-[#B94A48] font-bold shadow-xs'
+                : 'bg-[#F7F8F6] border-[#DCE3E3] hover:bg-[#B94A48]/10 text-[#173B3F]'
+            }`}
+          >
+            <AlertCircle className="w-5 h-5 mx-auto mb-1 text-[#B94A48]" />
+            <span className="text-xs block font-semibold">Refer for Specialist Review</span>
+            <span className="text-[10px] text-[#667477] block">Send to ophthalmologist</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSaveReview('UNABLE_TO_DETERMINE')}
+            disabled={isSavingReview}
+            className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+              reviewStatus === 'UNABLE_TO_DETERMINE'
+                ? 'bg-[#C98A3D]/15 border-[#C98A3D] text-[#C98A3D] font-bold shadow-xs'
+                : 'bg-[#F7F8F6] border-[#DCE3E3] hover:bg-[#C98A3D]/10 text-[#173B3F]'
+            }`}
+          >
+            <Clock className="w-5 h-5 mx-auto mb-1 text-[#C98A3D]" />
+            <span className="text-xs block font-semibold">Unable to Determine</span>
+            <span className="text-[10px] text-[#667477] block">Repeat scan recommended</span>
+          </button>
+        </div>
+
+        <div className="space-y-1 pt-2">
+          <label className="block text-xs font-semibold text-[#173B3F]">
+            Healthcare Worker Clinical Notes (Optional):
+          </label>
+          <textarea
+            rows={2}
+            value={reviewNotes}
+            onChange={(e) => setReviewNotes(e.target.value)}
+            placeholder="Add notes on fundus findings, patient history, or specialist referral details..."
+            className="w-full px-3 py-2 text-xs rounded-xl border border-[#DCE3E3] focus:outline-none focus:ring-2 focus:ring-[#2E6F73] bg-[#F7F8F6]/50"
+          />
+        </div>
+
+        {reviewSavedSuccess && (
+          <div className="text-xs text-[#4D8061] font-semibold flex items-center gap-1.5 pt-1">
+            <CheckCircle2 className="w-4 h-4" />
+            <span>Human review decision and notes saved successfully!</span>
+          </div>
+        )}
+
+        {screening.reviewer_notes && reviewStatus !== 'PENDING_REVIEW' && (
+          <div className="text-[11px] text-[#667477] bg-[#F7F8F6] p-2.5 rounded-lg border border-[#DCE3E3]">
+            <strong>Recorded Reviewer Notes:</strong> "{screening.reviewer_notes}"
+          </div>
+        )}
+      </div>
+
+      {/* PATIENT SCREENING TIMELINE (Longitudinal History) */}
+      <div className="bg-white p-6 rounded-2xl border border-[#DCE3E3] shadow-xs space-y-4">
+        <div className="border-b border-[#DCE3E3] pb-3 flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-[#173B3F] flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[#2E6F73]" />
+              Patient Screening Timeline (Historical Progression)
+            </h3>
+            <p className="text-[11px] text-[#667477]">
+              Longitudinal tracking of retinal examinations for {screening.patient?.patient_code || `PT-${screening.patient_id}`}
+            </p>
+          </div>
+          <span className="text-[10px] text-[#667477] px-2 py-0.5 rounded bg-[#F7F8F6] border border-[#DCE3E3]">
+            {patientTimeline.length} total scan{patientTimeline.length === 1 ? '' : 's'}
+          </span>
+        </div>
+
+        {patientTimeline.length <= 1 ? (
+          <p className="text-xs text-[#667477] py-2 italic">
+            This is the initial baseline screening for patient {screening.patient?.patient_code || `PT-${screening.patient_id}`}. Subsequent scans will populate a comparison timeline here.
+          </p>
+        ) : (
+          <div className="space-y-2.5">
+            {patientTimeline.map((item) => {
+              const isCurrent = item.id === screening.id;
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => !isCurrent && navigate(`/app/result/${item.id}`)}
+                  className={`p-3 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${
+                    isCurrent
+                      ? 'bg-[#DCEDEC]/40 border-[#2E6F73]'
+                      : 'bg-[#F7F8F6] border-[#DCE3E3] hover:border-[#2E6F73] cursor-pointer'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs font-bold text-[#173B3F]">
+                      {new Date(item.created_at).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
+                    </span>
+                    {isCurrent && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#2E6F73] text-white font-bold">
+                        Current Scan
+                      </span>
+                    )}
+                    {item.prediction && (
+                      <SeverityBadge severity={item.prediction.predicted_class} size="sm" />
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3 text-xs text-[#667477]">
+                    {item.prediction && (
+                      <span>Confidence: {Math.round(item.prediction.confidence * 100)}%</span>
+                    )}
+                    <Badge
+                      variant={
+                        item.status === 'CONFIRMED'
+                          ? 'success'
+                          : item.status === 'REFERRED'
+                          ? 'danger'
+                          : 'default'
+                      }
+                      size="sm"
+                    >
+                      {item.status.replace('_', ' ')}
+                    </Badge>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <p className="text-[10px] text-[#667477] italic border-t border-[#DCE3E3] pt-2">
+          Note: This timeline displays historical screening recordings to assist clinical observation; it does not claim autonomous diagnostic disease progression.
+        </p>
       </div>
 
       {/* MANDATORY CLINICAL SAFETY DISCLAIMER */}

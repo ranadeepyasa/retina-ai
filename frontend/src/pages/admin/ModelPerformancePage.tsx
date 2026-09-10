@@ -103,34 +103,69 @@ export const ModelPerformancePage: React.FC = () => {
         subtitle={metrics?.is_evaluated ? "5x5 Class prediction matrix on held-out test cohort" : "Held-out test split evaluation required"}
       >
         {metrics?.is_evaluated && metrics.confusion_matrix ? (
-          <div className="overflow-x-auto">
-            <table className="text-center text-xs w-full max-w-lg mx-auto border-collapse">
-              <thead>
-                <tr>
-                  <th className="p-2 text-left text-[#667477]">Actual \ Predicted</th>
-                  {classLabels.map((c) => (
-                    <th key={c} className="p-2 font-bold text-[#173B3F]">{c.split(' - ')[1]}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {metrics.confusion_matrix.map((row, rIdx) => (
-                  <tr key={rIdx} className="border-t border-[#DCE3E3]">
-                    <td className="p-2 text-left font-bold text-[#173B3F]">{classLabels[rIdx]}</td>
-                    {row.map((cell, cIdx) => (
-                      <td
-                        key={cIdx}
-                        className={`p-2 font-mono font-semibold ${
-                          rIdx === cIdx ? 'bg-[#DCEDEC] text-[#173B3F]' : 'text-[#667477]'
-                        }`}
-                      >
-                        {cell}
-                      </td>
+          <div className="space-y-6">
+            <div className="overflow-x-auto">
+              <table className="text-center text-xs w-full max-w-lg mx-auto border-collapse">
+                <thead>
+                  <tr>
+                    <th className="p-2 text-left text-[#667477]">Actual \ Predicted</th>
+                    {classLabels.map((c) => (
+                      <th key={c} className="p-2 font-bold text-[#173B3F]">{c.split(' - ')[1]}</th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {metrics.confusion_matrix.map((row, rIdx) => (
+                    <tr key={rIdx} className="border-t border-[#DCE3E3]">
+                      <td className="p-2 text-left font-bold text-[#173B3F]">{classLabels[rIdx]}</td>
+                      {row.map((cell, cIdx) => (
+                        <td
+                          key={cIdx}
+                          className={`p-2 font-mono font-semibold ${
+                            rIdx === cIdx ? 'bg-[#DCEDEC] text-[#173B3F]' : 'text-[#667477]'
+                          }`}
+                        >
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Per-Class Metrics Breakdown */}
+            {metrics.per_class_metrics && (
+              <div className="border-t border-[#DCE3E3] pt-4">
+                <h4 className="text-xs font-bold text-[#173B3F] mb-2 uppercase tracking-wider">
+                  Per-Class Sensitivity, Precision & F1 Breakdown
+                </h4>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-[#DCE3E3] text-[#667477]">
+                        <th className="py-2">DR Grade</th>
+                        <th className="py-2">Sensitivity (Recall)</th>
+                        <th className="py-2">Precision</th>
+                        <th className="py-2">F1-Score</th>
+                        <th className="py-2">Test Support</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(metrics.per_class_metrics).map(([clsName, vals]: [string, any]) => (
+                        <tr key={clsName} className="border-b border-[#DCE3E3]/60 hover:bg-[#F7F8F6]">
+                          <td className="py-2 font-semibold text-[#173B3F]">{clsName}</td>
+                          <td className="py-2 font-mono">{(vals.recall * 100).toFixed(1)}%</td>
+                          <td className="py-2 font-mono">{(vals.precision * 100).toFixed(1)}%</td>
+                          <td className="py-2 font-mono">{(vals.f1_score * 100).toFixed(1)}%</td>
+                          <td className="py-2 text-[#667477]">{vals.support ?? '--'} samples</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="p-8 rounded-xl border border-dashed border-[#DCE3E3] bg-[#F7F8F6] text-center space-y-2">

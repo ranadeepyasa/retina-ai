@@ -1,0 +1,94 @@
+{
+  "model_name": "EfficientNet-B0 (Trained & Calibrated)",
+  "version": "v1.0-evaluated",
+  "architecture": "EfficientNet-B0 + Grad-CAM",
+  "dataset_source": "IDRiD (Indian Diabetic Retinopathy Image Dataset - 103 Held-Out Test Images)",
+  "is_evaluated": true,
+  "status": "Evaluated on held-out test set with Temperature Calibration",
+  "total_test_samples": 103,
+  "accuracy": 0.4466,
+  "precision": 0.5185,
+  "recall": 0.4466,
+  "f1_score": 0.4647,
+  "macro_f1": 0.3793,
+  "sensitivity": 0.8594,
+  "specificity": 0.7692,
+  "referable_dr_tp": 55,
+  "referable_dr_fp": 9,
+  "referable_dr_fn": 9,
+  "referable_dr_tn": 30,
+  "temperature": 0.8157,
+  "raw_avg_confidence": 0.5117,
+  "calibrated_avg_confidence": 0.5584,
+  "raw_ece": 0.1119,
+  "calibrated_ece": 0.145,
+  "confusion_matrix": [
+    [
+      18,
+      8,
+      8,
+      0,
+      0
+    ],
+    [
+      3,
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      3,
+      3,
+      17,
+      4,
+      5
+    ],
+    [
+      0,
+      1,
+      7,
+      5,
+      6
+    ],
+    [
+      1,
+      1,
+      6,
+      0,
+      5
+    ]
+  ],
+  "per_class_metrics": {
+    "No DR": {
+      "precision": 0.72,
+      "recall": 0.5294,
+      "f1_score": 0.6102,
+      "support": 34
+    },
+    "Mild": {
+      "precision": 0.0714,
+      "recall": 0.2,
+      "f1_score": 0.1053,
+      "support": 5
+    },
+    "Moderate": {
+      "precision": 0.4359,
+      "recall": 0.5312,
+      "f1_score": 0.4789,
+      "support": 32
+    },
+    "Severe": {
+      "precision": 0.5556,
+      "recall": 0.2632,
+      "f1_score": 0.3571,
+      "support": 19
+    },
+    "Proliferative": {
+      "precision": 0.3125,
+      "recall": 0.3846,
+      "f1_score": 0.3448,
+      "support": 13
+    }
+  }
+}

@@ -1,5 +1,8 @@
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+
 class MLConfig:
     # Model Architecture
     MODEL_NAME = "efficientnet_b0"
@@ -13,14 +16,17 @@ class MLConfig:
     
     # Training Hyperparameters
     BATCH_SIZE = 16
-    NUM_EPOCHS = 15
-    LEARNING_RATE = 1e-4
+    STAGE1_EPOCHS = 3
+    STAGE2_EPOCHS = 10
+    NUM_EPOCHS = STAGE1_EPOCHS + STAGE2_EPOCHS
+    LEARNING_RATE_STAGE1 = 1e-3
+    LEARNING_RATE_STAGE2 = 1e-4
     WEIGHT_DECAY = 1e-4
-    NUM_WORKERS = 0  # 0 for safe multi-platform execution
+    NUM_WORKERS = 0  # Safe cross-platform
     
     # Paths
-    DATASET_DIR = os.getenv("DATASET_DIR", "./dataset")
-    OUTPUT_MODEL_DIR = os.getenv("OUTPUT_MODEL_DIR", "../backend/models")
+    DATASET_DIR = os.getenv("DATASET_DIR", os.path.join(PROJECT_ROOT, "dataset"))
+    OUTPUT_MODEL_DIR = os.getenv("OUTPUT_MODEL_DIR", os.path.join(PROJECT_ROOT, "backend", "models"))
     MODEL_SAVE_PATH = os.path.join(OUTPUT_MODEL_DIR, "dr_model.pth")
     METRICS_SAVE_PATH = os.path.join(OUTPUT_MODEL_DIR, "metrics.json")
     

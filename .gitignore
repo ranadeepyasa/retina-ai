@@ -73,13 +73,15 @@ backend/uploads/temp/
 !backend/uploads/samples/
 !backend/uploads/samples/*.jpg
 
-# Large Deep Learning Checkpoints (>50MB)
+# Large Deep Learning Checkpoints (>50MB) and Training Data
 *.pth
 *.pt
 *.onnx
 *.h5
 *.ckpt
 backend/models/*.pth
+dataset/
+dataset_cache/
 
 # Logs & OS artifacts
 *.log

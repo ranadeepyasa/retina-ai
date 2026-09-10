@@ -17,19 +17,19 @@ CLASS_LABELS = {
 CLASS_SHORT_NAMES = ["No DR", "Mild", "Moderate", "Severe", "Proliferative"]
 
 INTERPRETATIONS = {
-    0: "No visible signs of microaneurysms, hemorrhages, or hard exudates. Retinal vasculature and optic disc appear within normal limits for screening.",
-    1: "Scattered microaneurysms or small focal lesions detected. Early microvascular changes characteristic of mild non-proliferative retinopathy.",
-    2: "Multiple microaneurysms, dot-and-blot hemorrhages, venous dilation, or hard exudates identified in the macular/vascular arcade regions.",
-    3: "Marked retinal hemorrhages across multiple quadrants, cotton-wool spots (nerve fiber layer infarcts), and venous caliber irregularities without overt neovascularization.",
-    4: "Extensive retinal microvascular disruption with features consistent with neovascularization (NVD/NVE), pre-retinal hemorrhage, or fibrovascular proliferation."
+    0: "No diabetic retinopathy pattern was detected by the AI screening model. Retinal vasculature and optic disc appear within normal limits for screening.",
+    1: "The model identified patterns associated with mild diabetic retinopathy (scattered microaneurysms or small focal lesions).",
+    2: "The model identified patterns associated with moderate diabetic retinopathy (multiple microaneurysms, dot-and-blot hemorrhages, or hard exudates).",
+    3: "The model identified patterns associated with severe diabetic retinopathy (marked retinal hemorrhages across multiple quadrants or cotton-wool spots).",
+    4: "The model identified patterns associated with proliferative diabetic retinopathy (features consistent with neovascularization or pre-retinal hemorrhage)."
 }
 
 ACTIONS = {
-    0: "Routine annual retinal screening recommended for diabetic patients in primary care.",
-    1: "Reinforce glycemic and blood pressure optimization. Schedule repeat retinal screening in 6 to 12 months.",
-    2: "Consider referral for comprehensive ophthalmological evaluation within 2 to 3 months. Review metabolic control.",
-    3: "Prompt referral to an eye care specialist or ophthalmologist within 2 to 4 weeks. High risk of progression.",
-    4: "Urgent referral to a vitreoretinal specialist within 1 to 2 weeks for consideration of panretinal photocoagulation or anti-VEGF therapy."
+    0: "Continue appropriate diabetes and eye-health follow-up according to clinical guidance.",
+    1: "Consider professional ophthalmological evaluation. Reinforce glycemic and blood pressure optimization.",
+    2: "Consider professional ophthalmological evaluation. Schedule comprehensive clinical review.",
+    3: "Priority specialist evaluation is recommended. Prompt referral to an ophthalmologist.",
+    4: "Priority specialist evaluation is recommended. Urgent referral to a vitreoretinal specialist."
 }
 
 REFERRAL_URGENCIES = {
@@ -53,7 +53,7 @@ def get_device():
 
 def build_model_architecture():
     """
-    Constructs an EfficientNet-B0 or ResNet model with 5 output logits.
+    Constructs an EfficientNet-B0 backbone with 5 output logits.
     """
     try:
         import torch
@@ -65,8 +65,9 @@ def build_model_architecture():
         except Exception:
             model = efficientnet_b0(pretrained=False)
             
-        # Replace classifier head for 5 DR classes
+        # Replace classifier head with dropout + linear for 5 DR classes
         in_features = model.classifier[1].in_features
+        model.classifier[0] = nn.Dropout(p=0.3, inplace=True)
         model.classifier[1] = nn.Linear(in_features, 5)
         return model, model.features[-1]
     except Exception:
@@ -82,22 +83,35 @@ def load_model(weights_path: str = "models/dr_model.pth"):
         return _MODEL_INSTANCE, _IS_DEMO_MODEL
 
     model, target_layer = build_model_architecture()
+
+    # Search for weights across common working directories
+    possible_paths = [
+        weights_path,
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "models", "dr_model.pth")),
+        os.path.join(os.getcwd(), "models", "dr_model.pth"),
+        os.path.join(os.getcwd(), "backend", "models", "dr_model.pth")
+    ]
+    resolved_path = None
+    for p in possible_paths:
+        if p and os.path.exists(p) and os.path.getsize(p) > 500000:
+            resolved_path = p
+            break
     
-    if os.path.exists(weights_path) and model is not None:
+    if resolved_path and model is not None:
         try:
             import torch
             device = get_device()
-            state_dict = torch.load(weights_path, map_location=device)
+            state_dict = torch.load(resolved_path, map_location=device)
             model.load_state_dict(state_dict)
             model.to(device)
             model.eval()
             _MODEL_INSTANCE = model
             _TARGET_LAYER = target_layer
             _IS_DEMO_MODEL = False
-            print(f"[RetinaAI ML] Successfully loaded trained model from {weights_path}")
+            print(f"[RetinaAI ML] Successfully loaded trained model from {resolved_path}")
             return _MODEL_INSTANCE, _IS_DEMO_MODEL
         except Exception as e:
-            print(f"[RetinaAI ML] Warning: Could not load {weights_path}: {e}. Falling back to Demo/Development mode.")
+            print(f"[RetinaAI ML] Warning: Could not load {resolved_path}: {e}. Falling back to Demo/Development mode.")
 
     # Fallback to Demo Mode
     if model is not None:
@@ -111,9 +125,54 @@ def load_model(weights_path: str = "models/dr_model.pth"):
     print("[RetinaAI ML] Operating in DEMO / DEVELOPMENT MODE (Demo/Development Model).")
     return _MODEL_INSTANCE, _IS_DEMO_MODEL
 
+def crop_to_fundus_circle(img: Image.Image) -> Image.Image:
+    """
+    Crops tight to the illuminated retinal mask to eliminate excessive black borders
+    typical of tabletop and handheld fundus cameras, preserving lesion resolution.
+    """
+    try:
+        arr = np.array(img)
+        gray = 0.299 * arr[:, :, 0] + 0.587 * arr[:, :, 1] + 0.114 * arr[:, :, 2]
+        mask = gray > 18
+        if np.sum(mask) > (img.width * img.height * 0.10):
+            y_indices, x_indices = np.where(mask)
+            x_min, x_max = int(np.min(x_indices)), int(np.max(x_indices))
+            y_min, y_max = int(np.min(y_indices)), int(np.max(y_indices))
+            pad_x = int((x_max - x_min) * 0.02)
+            pad_y = int((y_max - y_min) * 0.02)
+            x_min = max(0, x_min - pad_x)
+            x_max = min(img.width, x_max + pad_x)
+            y_min = max(0, y_min - pad_y)
+            y_max = min(img.height, y_max + pad_y)
+            if (x_max - x_min) > 50 and (y_max - y_min) > 50:
+                return img.crop((x_min, y_min, x_max, y_max))
+    except Exception:
+        pass
+    return img
+
+def get_calibration_temperature() -> float:
+    """
+    Retrieves empirical temperature scaling factor derived from the validation set.
+    """
+    possible_paths = [
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "models", "calibration.json")),
+        os.path.join(os.getcwd(), "models", "calibration.json"),
+        os.path.join(os.getcwd(), "backend", "models", "calibration.json")
+    ]
+    for p in possible_paths:
+        if p and os.path.exists(p):
+            try:
+                with open(p, "r") as f:
+                    data = json.load(f)
+                    t = float(data.get("temperature", 1.0))
+                    return max(0.1, min(5.0, t))
+            except Exception:
+                pass
+    return 1.0
+
 def preprocess_image(image_path: str):
     """
-    Preprocesses fundus photograph: RGB, Resize(224, 224), Normalize with ImageNet mean/std.
+    Preprocesses fundus photograph: RGB, Circular Crop, Resize(224, 224), Normalize with ImageNet mean/std.
     """
     try:
         import torch
@@ -129,8 +188,9 @@ def preprocess_image(image_path: str):
         ])
         with Image.open(image_path) as img:
             img_rgb = img.convert("RGB")
-            tensor = transform(img_rgb).unsqueeze(0)
-            return tensor, img_rgb
+            cropped_rgb = crop_to_fundus_circle(img_rgb)
+            tensor = transform(cropped_rgb).unsqueeze(0)
+            return tensor, cropped_rgb
     except Exception:
         with Image.open(image_path) as img:
             return None, img.convert("RGB")
@@ -138,13 +198,12 @@ def preprocess_image(image_path: str):
 def predict(image_path: str, model_path: str = "models/dr_model.pth") -> Dict[str, Any]:
     """
     Analyzes retinal fundus image and generates class prediction, confidence,
-    probability distribution, and Grad-CAM explanation.
+    probability distribution, and Grad-CAM explanation with calibration and diagnostic logging.
     """
     model, is_demo = load_model(model_path)
     tensor, pil_img = preprocess_image(image_path)
+    temperature = get_calibration_temperature()
     
-    # Check for demo filename hint or perform live model inference
-    # If the user or demo dataset has sample images with labels in name:
     filename_lower = os.path.basename(image_path).lower()
     
     if not is_demo and model is not None and tensor is not None:
@@ -154,7 +213,8 @@ def predict(image_path: str, model_path: str = "models/dr_model.pth") -> Dict[st
         tensor = tensor.to(device)
         with torch.no_grad():
             logits = model(tensor)
-            probs = F.softmax(logits, dim=1).squeeze().cpu().numpy()
+            scaled_logits = logits / temperature
+            probs = F.softmax(scaled_logits, dim=1).squeeze().cpu().numpy()
         pred_class = int(np.argmax(probs))
         confidence = float(probs[pred_class])
         
@@ -166,6 +226,18 @@ def predict(image_path: str, model_path: str = "models/dr_model.pth") -> Dict[st
             "Severe": round(float(probs[3]), 4),
             "Proliferative": round(float(probs[4]), 4)
         }
+
+        # Step 10: Diagnostic logging
+        print("\n[RetinaAI ML Diagnostic Log]")
+        print(f"  Input Image:          {image_path}")
+        print(f"  Input Dimensions:     {pil_img.size if pil_img else 'Unknown'}")
+        print(f"  Device:               {device}")
+        print(f"  Model Architecture:   EfficientNet-B0 (Trained Checkpoint)")
+        print(f"  Calibration Temp T:   {temperature:.4f}")
+        print(f"  Raw Logits:           {np.round(logits.squeeze().cpu().numpy(), 3)}")
+        print(f"  Calibrated Probs:     {np.round(probs, 4)}")
+        print(f"  Predicted Class:      {pred_class} ({CLASS_LABELS[pred_class]})")
+        print(f"  Top Confidence:       {confidence * 100:.2f}%\n")
     else:
         # Realistic inference heuristic for demo / development mode
         # Analyzes image statistics (red/orange lesions, vessel density)

@@ -141,9 +141,21 @@ def get_model_performance(
     If no evaluated model metrics exist, strictly displays 'Not evaluated'
     with message: 'Model evaluation metrics will appear after evaluation on the held-out test set.'
     """
-    if os.path.exists(METRICS_PATH):
+    possible_paths = [
+        METRICS_PATH,
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "models", "metrics.json")),
+        os.path.join(os.getcwd(), "models", "metrics.json"),
+        os.path.join(os.getcwd(), "backend", "models", "metrics.json")
+    ]
+    resolved_metrics_path = None
+    for p in possible_paths:
+        if p and os.path.exists(p):
+            resolved_metrics_path = p
+            break
+
+    if resolved_metrics_path:
         try:
-            with open(METRICS_PATH, "r") as f:
+            with open(resolved_metrics_path, "r") as f:
                 data = json.load(f)
             return ModelPerformanceMetrics(
                 model_name=data.get("model_name", "EfficientNet-B0 (Trained)"),
@@ -161,7 +173,7 @@ def get_model_performance(
                 per_class_metrics=data.get("per_class_metrics")
             )
         except Exception as e:
-            print(f"[RetinaAI Admin] Failed to parse metrics.json: {e}")
+            print(f"[RetinaAI Admin] Failed to parse {resolved_metrics_path}: {e}")
 
     # Honest un-evaluated state
     return ModelPerformanceMetrics(
