@@ -109,9 +109,6 @@ export const PublicLayout: React.FC = () => {
             >
               Demo & Info
             </Link>
-            <div className="pt-2 border-t border-[#DCE3E3]">
-              <LanguageSelector variant="drawer" />
-            </div>
           </div>
         )}
       </header>

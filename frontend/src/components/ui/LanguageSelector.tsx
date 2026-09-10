@@ -5,12 +5,10 @@ import { SUPPORTED_LANGUAGES, LanguageInfo } from '../../i18n';
 
 interface LanguageSelectorProps {
   className?: string;
-  variant?: 'navbar' | 'compact' | 'drawer';
 }
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   className = '',
-  variant = 'navbar',
 }) => {
   const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -38,42 +36,6 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     i18n.changeLanguage(lang.code);
     setIsOpen(false);
   };
-
-  if (variant === 'drawer') {
-    return (
-      <div className={`space-y-1.5 ${className}`}>
-        <label className="text-xs font-semibold text-[#5A6E67] uppercase tracking-wider px-2 flex items-center gap-1.5">
-          <Globe className="w-3.5 h-3.5 text-[#2E6F73]" />
-          {t('language.current', 'Language')} / భాష
-        </label>
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-[#FAF7F2] rounded-xl border border-[#E5DFD5]">
-          {SUPPORTED_LANGUAGES.map((lang) => {
-            const isSelected = lang.code === currentLangCode;
-            return (
-              <button
-                key={lang.code}
-                type="button"
-                onClick={() => handleSelect(lang)}
-                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  isSelected
-                    ? 'bg-[#2E6F73] text-white shadow-sm'
-                    : 'text-[#1B3634] hover:bg-white/80'
-                }`}
-              >
-                <div className="text-left truncate">
-                  <div className="font-semibold leading-tight">{lang.nativeName}</div>
-                  <div className={`text-[10px] leading-tight ${isSelected ? 'text-white/80' : 'text-[#7B8C86]'}`}>
-                    {lang.name}
-                  </div>
-                </div>
-                {isSelected && <Check className="w-3.5 h-3.5 ml-1 shrink-0" />}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className={`relative inline-block text-left ${className}`} ref={dropdownRef}>

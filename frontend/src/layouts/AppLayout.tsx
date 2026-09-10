@@ -125,11 +125,9 @@ export const AppLayout: React.FC = () => {
           </nav>
         </div>
 
-        {/* User Profile, Language Selector & Logout Bottom Bar */}
-        <div className="p-4 border-t border-[#DCE3E3] space-y-3">
-          <LanguageSelector variant="drawer" />
-
-          <div className="flex items-center gap-3 px-1">
+        {/* User Profile & Logout Bottom Bar */}
+        <div className="p-4 border-t border-[#DCE3E3]">
+          <div className="flex items-center gap-3 mb-3 px-2">
             <div className="w-8 h-8 rounded-full bg-[#DCEDEC] text-[#173B3F] flex items-center justify-center font-bold text-xs shrink-0">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>
