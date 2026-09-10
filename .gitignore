@@ -82,6 +82,7 @@ backend/uploads/temp/
 backend/models/*.pth
 dataset/
 dataset_cache/
+backup-current-ml-before-restore/
 
 # Logs & OS artifacts
 *.log

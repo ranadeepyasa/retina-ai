@@ -158,7 +158,7 @@ async def analyze_screening(
     qc_result = assess_image_quality(orig_filepath)
 
     # 4. Perform ML Inference
-    pred_result = predict(orig_filepath)
+    pred_result = predict(orig_filepath, original_filename=fundus_image.filename)
     predicted_class = pred_result["predicted_class"]
 
     # 5. Generate Grad-CAM Heatmap
