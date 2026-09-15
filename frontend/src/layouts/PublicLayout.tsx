@@ -135,7 +135,7 @@ export const PublicLayout: React.FC = () => {
               </p>
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#DCEDEC]/50 text-[#173B3F] text-[11px] font-medium">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#2E6F73]" />
-                <span>Smart India Hackathon Prototype | MedTech / HealthTech</span>
+                <span>AI-Assisted Screening Platform | MedTech Decision Support</span>
               </div>
             </div>
 
@@ -166,7 +166,7 @@ export const PublicLayout: React.FC = () => {
               They do NOT constitute an independent clinical diagnosis and must be confirmed by a licensed ophthalmologist or eye-care professional.
             </p>
             <div className="shrink-0 text-center md:text-right">
-              &copy; {new Date().getFullYear()} RetinaAI. SIH Solution.
+              &copy; {new Date().getFullYear()} RetinaAI. Personal Project.
             </div>
           </div>
         </div>

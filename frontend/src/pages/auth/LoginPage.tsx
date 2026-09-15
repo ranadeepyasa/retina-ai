@@ -82,10 +82,10 @@ export const LoginPage: React.FC = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 sm:px-10 rounded-2xl border border-[#DCE3E3] shadow-sm">
-          {/* Quick Demo Fill Buttons for SIH Hackathon Evaluators */}
+          {/* Quick Demo Fill Buttons for Testing & Demonstration */}
           <div className="mb-6 p-3 bg-[#F7F8F6] rounded-xl border border-[#DCE3E3]">
             <span className="block text-[11px] font-semibold text-[#667477] uppercase tracking-wider mb-2">
-              SIH Evaluation Fast-Fill:
+              Demo Credentials Fast-Fill:
             </span>
             <div className="flex gap-2">
               <button

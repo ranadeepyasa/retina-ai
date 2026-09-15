@@ -12,10 +12,10 @@ export const ContactPage: React.FC = () => {
       <div className="text-center max-w-2xl mx-auto">
         <span className="text-xs font-semibold text-[#2E6F73] uppercase tracking-wider">Evaluation & Demonstration</span>
         <h1 className="text-3xl font-extrabold text-[#173B3F] mt-2">
-          SIH Demonstration Guide
+          Project Demonstration Guide
         </h1>
         <p className="text-sm text-[#667477] mt-3 leading-relaxed">
-          Instructions for Smart India Hackathon evaluators to test the end-to-end clinical screening flow, Grad-CAM visualizations, and reporting engine.
+          Instructions for testing the end-to-end clinical screening flow, Grad-CAM visualizations, and reporting engine.
         </p>
       </div>
 

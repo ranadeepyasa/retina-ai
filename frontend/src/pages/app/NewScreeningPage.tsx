@@ -43,7 +43,7 @@ export const NewScreeningPage: React.FC = () => {
     t('results.subtitle', 'Compiling clinical referral decision support report...'),
   ];
 
-  // Quick Preset Samples for Hackathon Judges
+  // Quick Preset Samples for Demonstration
   const samplePresets = [
     { label: 'Normal Retina (No DR)', code: 'DEMO-001', age: 48, sex: 'Female', duration: '3 years', sampleName: 'demo-001_severity_0.jpg' },
     { label: 'Moderate NPDR (Exudates)', code: 'DEMO-002', age: 62, sex: 'Male', duration: '11 years', sampleName: 'demo-002_severity_2.jpg' },
@@ -55,7 +55,7 @@ export const NewScreeningPage: React.FC = () => {
     setAge(preset.age);
     setSex(preset.sex);
     setDiabetesDuration(preset.duration);
-    setNotes(`SIH evaluation preset: ${preset.label}`);
+    setNotes(`Demonstration preset: ${preset.label}`);
 
     // Fetch sample image from server samples directory
     try {
@@ -172,13 +172,13 @@ export const NewScreeningPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Quick Fast-Select for Evaluators */}
+      {/* Quick Fast-Select for Demonstration */}
       <div className="bg-white p-4 rounded-xl border border-[#DCE3E3] shadow-xs">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-[#173B3F] flex items-center">
             Fast Evaluation Presets (Click to autofill patient & fundus image)
           </span>
-          <span className="text-[10px] text-[#667477]">Smart India Hackathon</span>
+          <span className="text-[10px] text-[#667477]">Demonstration Presets</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {samplePresets.map((p) => (

@@ -44,7 +44,7 @@ export const SettingsPage: React.FC = () => {
       {/* Demo Data Management */}
       <Card
         title="Demonstration Data Controls"
-        subtitle="Manage pre-seeded SIH evaluation patient records"
+        subtitle="Manage pre-seeded demonstration patient records"
       >
         <div className="space-y-4 text-xs text-[#667477]">
           <p>

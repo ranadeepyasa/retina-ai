@@ -399,18 +399,18 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. TEAM / SIH SECTION */}
+      {/* 6. PROJECT OVERVIEW SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="bg-white p-8 rounded-2xl border border-[#DCE3E3] flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <span className="text-[11px] font-semibold text-[#2E6F73] uppercase tracking-wider">
-              Smart India Hackathon Innovation
+              AI-Assisted Retinal Screening
             </span>
             <h3 className="text-lg font-bold text-[#173B3F] mt-1">
               Explainable AI for Diabetic Retinopathy Screening in Rural India
             </h3>
             <p className="text-xs text-[#667477] mt-1 max-w-xl">
-              MedTech / HealthTech domain initiative focused on addressing healthcare disparities through ethical, interpretable deep learning for primary health centers.
+              MedTech research initiative focused on addressing healthcare disparities through ethical, interpretable deep learning decision support for primary health centers.
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">

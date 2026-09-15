@@ -30,7 +30,7 @@ services:
         condition: service_healthy
     environment:
       - DATABASE_URL=postgresql://retina_user:retina_secure_password_2026@postgres:5432/retina_ai_db
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-retina-ai-sih-dev-secret-key-change-in-production-2026}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-retina-ai-dev-secret-key-change-in-production-2026}
       - DEMO_MODE=${DEMO_MODE:-true}
       - UPLOAD_DIR=/app/uploads
       - MODELS_DIR=/app/models

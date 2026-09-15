@@ -168,8 +168,8 @@ export const AppLayout: React.FC = () => {
             {/* Demo Mode Notice Badge */}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#C98A3D]/10 text-[#C98A3D] text-[11px] font-semibold border border-[#C98A3D]/30">
               <AlertTriangle className="w-3 h-3 shrink-0" />
-              <span className="hidden xs:inline">DEMO MODE (SIH Prototype)</span>
-              <span className="xs:hidden">SIH DEMO</span>
+              <span className="hidden xs:inline">DEMO MODE (Evaluation Prototype)</span>
+              <span className="xs:hidden">DEMO MODE</span>
             </div>
           </div>
         </header>

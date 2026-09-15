@@ -39,8 +39,7 @@ app = FastAPI(
     title="RetinaAI - Explainable Diabetic Retinopathy Screening API",
     description=(
         "Production-style backend API for AI-assisted Diabetic Retinopathy screening "
-        "and Grad-CAM visual explainability in rural primary health centres. "
-        "Smart India Hackathon MedTech Project."
+        "and Grad-CAM visual explainability in rural primary health centres."
     ),
     version="1.0.0",
     lifespan=lifespan

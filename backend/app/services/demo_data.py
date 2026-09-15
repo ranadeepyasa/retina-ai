@@ -118,7 +118,7 @@ def create_synthetic_fundus_image(output_path: str, severity: int = 0) -> str:
 
 def seed_demo_database(db: Session, upload_dir: str = "./uploads"):
     """
-    Seeds the database with standard SIH demo credentials, demo patients,
+    Seeds the database with standard demo credentials, demo patients,
     and initial screening records with synthetic fundus images and Grad-CAM overlays.
     """
     # 1. Seed Users

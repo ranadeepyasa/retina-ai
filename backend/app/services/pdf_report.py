@@ -107,7 +107,7 @@ def generate_screening_pdf(
     # 1. Header Banner
     header_data = [
         [
-            Paragraph("<b>RetinaAI Clinical Screening Platform</b><br/><font size=8 color='#667477'>Rural Health Tele-Ophthalmology Decision Support | SIH Initiative</font>", title_style),
+            Paragraph("<b>RetinaAI Clinical Screening Platform</b><br/><font size=8 color='#667477'>Rural Health Tele-Ophthalmology Decision Support | Personal Research Platform</font>", title_style),
             Paragraph("<b>REPORT ID:</b> SCR-" + str(screening_data.get('id', 'N/A')).zfill(5) + "<br/><b>Date:</b> " + datetime.now().strftime("%d %b %Y, %H:%M"), ParagraphStyle('HRight', parent=body_style, alignment=TA_RIGHT))
         ]
     ]

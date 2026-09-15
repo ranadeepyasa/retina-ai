@@ -3,8 +3,7 @@
     "name": "RetinaAI",
     "title": "Explainable AI for Diabetic Retinopathy Screening in Rural India",
     "tag": "Clinical Decision Support",
-    "disclaimer": "AI-assisted screening and referral support tool. Not a replacement for a certified ophthalmologist.",
-    "sihBadge": "Smart India Hackathon 2024"
+    "disclaimer": "AI-assisted screening and referral support tool. Not a replacement for a certified ophthalmologist."
   },
   "nav": {
     "home": "Home",

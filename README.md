@@ -2,7 +2,7 @@
 
 > **A clinical-grade, Explainable AI decision-support platform enabling frontline healthcare workers in rural Primary Health Centres (PHCs) to perform rapid retinal triage, detect preventable vision loss, and visualize model decisions with Grad-CAM heatmaps.**
 
-[![Smart India Hackathon](https://img.shields.io/badge/Smart%20India%20Hackathon-MedTech%20%2F%20HealthTech-173B3F.svg)](https://sih.gov.in)
+[![Project: Personal](https://img.shields.io/badge/Project-Personal%20Research%20%7C%20MedTech-173B3F.svg)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-4D8061.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-2E6F73.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-4D8061.svg)](https://fastapi.tiangolo.com)
@@ -23,7 +23,7 @@
 
 ## Table of Contents
 1. [Project Title & Mission](#1-project-title--mission)
-2. [Smart India Hackathon Problem Statement Context](#2-smart-india-hackathon-problem-statement-context)
+2. [Clinical Problem Context & Rural Scope](#2-clinical-problem-context--rural-scope)
 3. [Why This Matters in Rural India](#3-why-this-matters-in-rural-india)
 4. [Key Features](#4-key-features)
 5. [Explainable AI Architecture & Grad-CAM](#5-explainable-ai-architecture--grad-cam)
@@ -53,10 +53,10 @@
 
 ---
 
-## 2. Smart India Hackathon Problem Statement Context
+## 2. Clinical Problem Context & Rural Scope
 
 * **Category:** MedTech / HealthTech / BioTech / Rural Telemedicine
-* **Theme:** Artificial Intelligence for Equitable Healthcare Access
+* **Focus:** Artificial Intelligence for Equitable Healthcare Access
 * **Problem Scope:**
   Diabetic Retinopathy (DR) affects approximately one-third of all individuals with diabetes. In India, where over 77 million people are estimated to live with diabetes, early screening is critical to prevent irreversible visual impairment. However, over 70% of India's population resides in rural regions, whereas more than 80% of ophthalmologists and specialized retinal imaging equipment are concentrated in tier-1 and tier-2 metropolitan centers. 
   
@@ -479,6 +479,5 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 
 ## 20. Team Credits & Acknowledgments
 
-* **Smart India Hackathon (SIH)** — For fostering technological innovation to solve real-world national challenges.
 * **Ministry of Health & Family Welfare (MoHFW)** — For public health screening guidelines on Diabetic Retinopathy.
 * **Open Source Medical Imaging Community** — APTOS, EyePACS, and Messidor consortiums for making de-identified diabetic retinopathy benchmarks accessible for research.
